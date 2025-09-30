@@ -49,7 +49,7 @@ export default function LeaderPage() {
                 It's your Real Estate Experience – make it a good one!
               </h2>
               <p className="text-gray-800 text-xl leading-relaxed mb-6">
-                Linda R. Olsson, Inc., Realtor is celebrating its 30th year as a leader among Luxury Palm Beach Real Estate firms. Linda Olsson, broker owner, takes great pride in the continued success of her name-sake firm. A Palm Beach resident for over twenty years, Linda is an active community member; she lives, plays, and works in town. She lives and breaths Palm Beach real estate... she and her staff are available 24/7 which equates to unparalleled customer service.
+                Linda R. Olsson, Inc., Realtor is celebrating its 36th year as a leader among Luxury Palm Beach Real Estate firms. Linda Olsson, broker owner, takes great pride in the continued success of her name-sake firm. A Palm Beach resident for over twenty years, Linda is an active community member; she lives, plays, and works in town. She lives and breaths Palm Beach real estate... she and her staff are available 24/7 which equates to unparalleled customer service.
               </p>
               <p className="text-gray-800 text-xl leading-relaxed mb-6">
                 Her personal knowledge of the community cannot be replicated by national firms. Realizing there was a demand for personalized, professional real estate service, in 1989 Linda opened the firm specializing in Palm Beach Luxury Properties. Our successful track record is a testament to our commitment to buyers and sellers. Our customers do not hesitate to recommend us, please take a moment of your time to read our wonderful testimonials from our loyal clients.
