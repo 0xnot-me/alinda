@@ -39,12 +39,14 @@ export default function TeamPage() {
       email: "jennifer@lindaolsson.com",
       readFullBio: true
     },
+    /*
     {
       name: "Justin Besikof",
       image: "/team2.jpeg",
       email: "justin@lindaolsson.com",
       readFullBio: true
     },
+    */
     {
       name: "Shana Bickwid",
       image: "/shana.png",
