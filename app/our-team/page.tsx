@@ -40,6 +40,7 @@ export default function TeamPage() {
       viewListings: true,
       readFullBio: true
     },
+    /*
     {
       name: "Justin Besikof",
       image: "/team2.jpeg",
@@ -47,6 +48,8 @@ export default function TeamPage() {
       viewListings: true,
       readFullBio: true
     },
+    */
+    
     {
       name: "Dale Coudert",
       image: "/team3.jpg",
