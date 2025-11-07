@@ -8,7 +8,7 @@ export interface Testimonial {
 export const testimonials: Testimonial[] = [
     {
     quote: "It was a pleasure working with Linda on the sale of my Palm Beach residence. She demonstrated exceptional professionalism, a deep knowledge of the Palm Beach market, and an impeccable eye for detail. Linda's integrity, tireless dedication, and work ethic truly sets her apart. She understands the nuances of the Palm Beach market and represented my property with the utmost precision, discretion, and care.",
-    author: Terry M.",
+    author: "Terry M.",
     type: "Home Seller"
   },
   {
