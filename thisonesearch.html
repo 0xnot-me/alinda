@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Search - Linda Olsson</title>
+    <link rel="icon" href="http://www.lindaolsson.com/flogo.svg">
+    <!-- Google Fonts - Instrument Serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- Include IDX required stylesheets -->
+    <link rel="stylesheet" type="text/css" href="https://mlspalmbeach.lindaolsson.com/graphical/frontend/css/idxstyles.php?t=574%7C142%7C487%7C266%7C575%7C5%7C518&a=13051&w=s&c%5Bs%5D=64" />
+    <link rel="stylesheet" href="//d1qfrurkpai25r.cloudfront.net/graphical/css/jquery-ui-bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="//d1qfrurkpai25r.cloudfront.net/graphical/css/select2.css" type="text/css" />
+    <link rel="stylesheet" href="//d1qfrurkpai25r.cloudfront.net/graphical/css/mobileFirst.css">
+    
+    <style>
+        /* Basic resets */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            padding-top: 7rem;
+        }
+        
+        /* Font variables */
+        :root {
+            --font-instrument: 'Instrument Serif', serif;
+            --brand-green: #1b4e1f;
+            --brand-green-light: #2c7432;
+            --brand-green-dark: #184b1c;
+        }
+        
+        /* Apply Instrument Serif to headings */
+        h1, h2, h3, .instrument-serif {
+            font-family: var(--font-instrument);
+            font-weight: 400;
+        }
+        
+        /* NAVBAR STYLES - Adjusted to match Navbar.tsx */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            width: 100%;
+            padding: 2rem 1rem; /* Adjusted to match py-8 in Navbar.tsx */
+            background-color: var(--brand-green);
+            transition: all 0.3s;
+        }
+        
+        /* Apply Instrument Serif to navbar elements */
+        .nav-link, 
+        .dropdown-link, 
+        .mobile-link,
+        .mobile-section-title {
+            font-family: var(--font-instrument);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* Logo positioned in the center - matches Navbar.tsx */
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        
+        .logo {
+            height: 5rem; /* Adjusted to match h-20 in Navbar.tsx */
+        }
+        
+        /* Left Nav Menu */
+        .left-nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-right: 5rem;
+        }
+        
+        /* Right Nav Menu */
+        .right-nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-left: 12rem;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 1.25rem; /* Matches text-xl in Navbar.tsx */
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .dropdown-icon {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 0.25rem;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid white;
+            transition: transform 0.2s;
+        }
+        
+        .nav-item:hover .dropdown-icon {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background-color: var(--brand-green);
+            border: 1px solid var(--brand-green-dark);
+            border-radius: 0.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 101;
+            margin-top: 0.5rem;
+        }
+        
+        .right-dropdown {
+            left: auto;
+            right: 0;
+        }
+        
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .dropdown-link {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            font-size: 1.125rem;
+            transition: background-color 0.2s;
+        }
+        
+        .dropdown-link:hover {
+            background-color: var(--brand-green-dark);
+        }
+        
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        /* Mobile menu */
+        .mobile-menu {
+            display: none;
+        }
+        
+        /* Maintain the existing container structure */
+        .idx-container-wrapper {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        #idx-form-container {
+            width: 100%;
+        }
+        
+        /* Hide any extra IDX content that might cause duplication */
+        #IDX-main:empty, 
+        body > div:not(.navbar):not(.idx-container-wrapper):not(.mobile-menu),
+        body > div > div#IDX-main:not(#custom-search-container),
+        body > #IDX-searchPageWrapper,
+        div[id^="IDX-"]:not(#idx-form-container):not(#custom-IDX-main) {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* Search Tabs */
+        .search-tabs {
+            display: flex;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .search-tab {
+            padding: 15px 20px;
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-instrument);
+            color: #333;
+            text-decoration: none;
+            flex: 1;
+        }
+        
+        .search-tab.active {
+            background-color: var(--brand-green);
+            color: white;
+        }
+        
+        .search-tab:hover:not(.active) {
+            background-color: #ececec;
+        }
+        
+        /* Search Form Content */
+        .search-form-container {
+            padding: 30px;
+        }
+        
+        .search-title {
+            font-family: var(--font-instrument);
+            color: var(--brand-green);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        /* Form Layout */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .form-group {
+            flex: 1 0 45%;
+            min-width: 240px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8.825L1.175 4 2.05 3.125 6 7.075 9.95 3.125 10.825 4 6 8.825z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 30px;
+        }
+        
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background-color: var(--brand-green);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--brand-green-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Fix for placeholder text */
+        ::placeholder {
+            color: #aaa;
+            opacity: 1;
+        }
+        
+        /* Media Queries */
+        @media (max-width: 992px) {
+            .left-nav, .right-nav {
+                gap: 1rem;
+                margin-left: 6rem;
+                margin-right: 3rem;
+            }
+            
+            .nav-link {
+                font-size: 1rem;
+            }
+            
+            .form-group {
+                flex: 0 0 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .left-nav, .right-nav {
+                display: none;
+            }
+            
+            .mobile-menu.open {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: var(--brand-green);
+                z-index: 200;
+                padding: 4rem 1rem 1rem;
+                overflow-y: auto;
+            }
+            
+            .mobile-menu-close {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+            
+            .mobile-section {
+                border-bottom: 1px solid var(--brand-green-dark);
+                padding-bottom: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .mobile-section-title {
+                color: white;
+                font-size: 1.25rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .mobile-links {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding-left: 1rem;
+            }
+            
+            .mobile-link {
+                color: white;
+                text-decoration: none;
+                font-size: 1rem;
+                padding: 0.5rem 0;
+            }
+            
+            .idx-container-wrapper {
+                margin: 20px 10px;
+            }
+            
+            .search-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .search-tab {
+                flex: 1 0 50%;
+            }
+            
+            .search-form-container {
+                padding: 20px 15px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+
+            .container {
+                justify-content: center;
+            }
+            
+            .logo-container {
+                position: static;
+                transform: none;
+                text-align: center;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar - Updated to match Navbar.tsx -->
+    <nav class="navbar">
+        <div class="container">
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            
+            <!-- Left Navigation -->
+            <div class="left-nav">
+                <div class="nav-item">
+                    <a href="http://www.lindaolsson.com/about-us" class="nav-link">
+                        About <span class="dropdown-icon"></span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="http://www.lindaolsson.com/about-us" class="dropdown-link">ABOUT LINDA</a>
+                        <a href="http://www.lindaolsson.com/our-team" class="dropdown-link">OUR TEAM</a>
+                        <a href="http://www.lindaolsson.com/a-leader-in-palm-beach-real-estate" class="dropdown-link">A LEADER IN PALM BEACH REAL ESTATE</a>
+                        <a href="http://www.lindaolsson.com/concierge-quality-realty-services" class="dropdown-link">CONCIERGE QUALITY REALTY SERVICES</a>
+                        <a href="http://www.lindaolsson.com/community-involvement" class="dropdown-link">GIVING BACK...COMMUNITY INVOLVEMENT</a>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="http://www.lindaolsson.com/search" class="nav-link">
+                        Search For Homes <span class="dropdown-icon"></span>
+                    </a>
+                    <div class="dropdown">
+                        <a href="http://www.lindaolsson.com/properties" class="dropdown-link">FEATURED PROPERTIES</a>
+                        <a href="http://www.lindaolsson.com/north-end-palm-beach-real-estate" class="dropdown-link">NORTH END HOMES</a>
+                        <a href="http://www.lindaolsson.com/in-town-palm-beach-real-estate" class="dropdown-link">IN TOWN HOMES</a>
+                        <a href="http://www.lindaolsson.com/estate-section" class="dropdown-link">ESTATE SECTION HOMES</a>
+                        <a href="http://www.lindaolsson.com/in-town-townhomes" class="dropdown-link">IN-TOWN TOWNHOMES</a>
+                        <a href="http://www.lindaolsson.com/in-town-condos" class="dropdown-link">IN-TOWN CONDOS</a>
+                        <a href="http://www.lindaolsson.com/sloans-curve-south-to-manalapan" class="dropdown-link">SLOANS CURVE SOUTH TO MANALAPAN CONDOMINIUMS</a>
+                        <a href="http://www.lindaolsson.com/luxury-palm-beach-condominium-co-op-buildings" class="dropdown-link">LUXURY PALM BEACH CONDOMINIUM AND CO-OP BUILDINGS</a>
+                        <a href="http://www.lindaolsson.com/palm-beach-florida-real-estate-news" class="dropdown-link">IN THE NEWS</a>
+                        <a href="https://mlspalmbeach.lindaolsson.com/idx/search/advanced" class="dropdown-link">ADVANCED SEARCH</a>
+                    </div>
+                </div>
+                <a href="http://www.lindaolsson.com/global-reach-local-expertise/why-consider-relocating-to-florida-tax-benefits-wealth-preservation" class="nav-link">
+                    Tax Benefits
+                </a>
+                <a href="http://www.lindaolsson.com/blog" class="nav-link">
+                    Blog
+                </a>
+            </div>
+            
+            <!-- Center Logo -->
+            <div class="logo-container">
+                <a href="http://www.lindaolsson.com/">
+                    <img src="http://www.lindaolsson.com/flogo.svg" alt="Linda R. Olsson Inc., Realtor" class="logo">
+                </a>
+            </div>
+            
+            <!-- Right Navigation -->
+            <div class="right-nav">
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        Why Choose Us? <span class="dropdown-icon"></span>
+                    </a>
+                    <div class="dropdown right-dropdown">
+                        <a href="http://www.lindaolsson.com/global-reach-local-expertise" class="dropdown-link">GLOBAL REACH/LOCAL EXPERTISE</a>
+                        <a href="http://www.lindaolsson.com/palm-beach-a-slice-of-paradise" class="dropdown-link">PALM BEACH – A SLICE OF PARADISE</a>
+                        <a href="http://www.lindaolsson.com/buying-selling-hire-professional" class="dropdown-link">BUYING OR SELLING? HIRE A PROFESSIONAL!</a>
+                        <a href="http://www.lindaolsson.com/4-essential-things-to-consider-when-buying-a-condo" class="dropdown-link">4 ESSENTIAL THINGS TO CONSIDER WHEN BUYING A CONDO</a>
+                        <a href="http://www.lindaolsson.com/sellers-tips" class="dropdown-link">SELLERS TIPS</a>
+                    </div>
+                </div>
+                <a href="http://www.lindaolsson.com/market-reports" class="nav-link">Market Reports</a>
+                <a href="http://www.lindaolsson.com/testimonials" class="nav-link">Testimonials</a>
+                <a href="http://www.lindaolsson.com/contact" class="nav-link">Contact</a>
+            </div>
+            
+            <!-- Empty div to maintain structure on mobile -->
+            <div class="mobile-placeholder"></div>
+        </div>
+    </nav>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
+        
+        <div class="mobile-menu-sections">
+            <!-- About Section -->
+            <div class="mobile-section">
+                <div class="mobile-section-title">About</div>
+                <div class="mobile-links">
+                    <a href="http://www.lindaolsson.com/about-us" class="mobile-link">ABOUT LINDA</a>
+                    <a href="http://www.lindaolsson.com/our-team" class="mobile-link">OUR TEAM</a>
+                    <a href="http://www.lindaolsson.com/a-leader-in-palm-beach-real-estate" class="mobile-link">A LEADER IN PALM BEACH REAL ESTATE</a>
+                    <a href="http://www.lindaolsson.com/concierge-quality-realty-services" class="mobile-link">CONCIERGE QUALITY REALTY SERVICES</a>
+                    <a href="http://www.lindaolsson.com/community-involvement" class="mobile-link">GIVING BACK...COMMUNITY INVOLVEMENT</a>
+                    <a href="http://www.lindaolsson.com/palm-beach-florida-real-estate-news" class="mobile-link">IN THE NEWS</a>
+                </div>
+            </div>
+            
+            <!-- Search For Homes Section -->
+            <div class="mobile-section">
+                <div class="mobile-section-title">Search For Homes</div>
+                <div class="mobile-links">
+                    <a href="http://www.lindaolsson.com/north-end-palm-beach-real-estate" class="mobile-link">NORTH END HOMES</a>
+                    <a href="http://www.lindaolsson.com/in-town-palm-beach-real-estate" class="mobile-link">IN TOWN HOMES</a>
+                    <a href="http://www.lindaolsson.com/estate-section" class="mobile-link">ESTATE SECTION HOMES</a>
+                    <a href="http://www.lindaolsson.com/in-town-townhomes" class="mobile-link">IN-TOWN TOWNHOMES</a>
+                    <a href="http://www.lindaolsson.com/in-town-condos" class="mobile-link">IN-TOWN CONDOS</a>
+                    <a href="http://www.lindaolsson.com/sloans-curve-south-to-manalapan" class="mobile-link">SLOANS CURVE SOUTH TO MANALAPAN CONDOMINIUMS</a>
+                    <a href="http://www.lindaolsson.com/luxury-palm-beach-condominium-co-op-buildings" class="mobile-link">LUXURY PALM BEACH CONDOMINIUM AND CO-OP BUILDINGS</a>
+                </div>
+            </div>
+            
+            <!-- Tax Benefits Section -->
+            <div class="mobile-section">
+                <div class="mobile-section-title">Why Choose Us?</div>
+                <div class="mobile-links">
+                    <a href="http://www.lindaolsson.com/global-reach-local-expertise" class="mobile-link">GLOBAL REACH/LOCAL EXPERTISE</a>
+                    <a href="http://www.lindaolsson.com/palm-beach-a-slice-of-paradise" class="mobile-link">PALM BEACH – A SLICE OF PARADISE</a>
+                    <a href="http://www.lindaolsson.com/buying-selling-hire-professional" class="mobile-link">BUYING OR SELLING? HIRE A PROFESSIONAL!</a>
+                    <a href="http://www.lindaolsson.com/4-essential-things-to-consider-when-buying-a-condo" class="mobile-link">4 ESSENTIAL THINGS TO CONSIDER WHEN BUYING A CONDO</a>
+                    <a href="http://www.lindaolsson.com/sellers-tips" class="mobile-link">SELLERS TIPS</a>
+                </div>
+            </div>
+            
+            <!-- Other Links -->
+            <div class="mobile-section">
+                <a href="http://www.lindaolsson.com/blog" class="mobile-link">Blog</a>
+                <a href="http://www.lindaolsson.com/tax-benefits" class="mobile-link">Tax Benefits</a>
+                <a href="http://www.lindaolsson.com/market-reports" class="mobile-link">Market Reports</a>
+                <a href="http://www.lindaolsson.com/testimonials" class="mobile-link">Testimonials</a>
+                <a href="http://www.lindaolsson.com/contact" class="mobile-link">Contact</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Search Container - Maintaining original structure -->
+    <div class="idx-container-wrapper">
+        <div id="idx-form-container">
+            <div id="custom-IDX-main">
+                <!-- Search Tabs -->
+                <!--div class="search-tabs">
+                    <a href="#" class="search-tab active">Advanced Search</a>
+                    <a href="#" class="search-tab">Listing ID</a>
+                    <a href="#" class="search-tab">Address</a>
+                    <a href="#" class="search-tab">Map Search</a>
+                </div-->
+                
+                <!-- Search Form Container -->
+                <div class="search-form-container">
+                    <h2 class="search-title">Find Your Perfect Palm Beach Property</h2>
+                    
+                    <form action="https://mlspalmbeach.lindaolsson.com/idx/results/listings" method="GET">
+                        <!-- Property Type & Sub Type -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="property-type" class="form-label">Property Type</label>
+                                <select id="property-type" name="pt" class="form-control">
+                                    <option value="1" selected>Residential</option>
+                                    <option value="3">Condo/Co-Op</option>
+                                    <option value="4">Townhouse/Villa</option>
+                                    <option value="5">Land/Acreage</option>
+                                    <option value="6">Commercial/Business</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="property-sub-type" class="form-label">Property Sub Type</label>
+                                <select id="property-sub-type" name="a_propSubType[]" class="form-control">
+                                    <option value="Single Family Residence">Single Family Residence</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Status -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" name="a_propStatus[]" class="form-control" multiple>
+                                    <option value="Active" selected>Active</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="city" class="form-label">City, County, Postal Code</label>
+                                <select id="city" name="ccz" class="form-control">
+                                    <option value="">Any</option>
+                                    <option value="35209">Palm Beach</option>
+                                    <option value="35210">Palm Beach Gardens</option>
+                                    <option value="51006">West Palm Beach</option>
+                                    <option value="43622">Riviera Beach</option>
+                                    <option value="33408">33408</option>
+                                    <option value="33480">33480</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Price Range -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="min-price" class="form-label">Min Price</label>
+                                <input type="text" id="min-price" name="lp" class="form-control" placeholder="Min Price">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="max-price" class="form-label">Max Price</label>
+                                <input type="text" id="max-price" name="hp" class="form-control" placeholder="Max Price">
+                            </div>
+                        </div>
+                        
+                        <!-- Bedrooms & Bathrooms -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bedrooms" class="form-label">Bedrooms</label>
+                                <select id="bedrooms" name="bd" class="form-control">
+                                    <option value="">Any Number</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">3+</option>
+                                    <option value="4">4+</option>
+                                    <option value="5">5+</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bathrooms" class="form-label">Bathrooms</label>
+                                <select id="bathrooms" name="tb" class="form-control">
+                                    <option value="">Any Number</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">3+</option>
+                                    <option value="4">4+</option>
+                                    <option value="5">5+</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- SqFt & Acres -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sqft" class="form-label">SqFt</label>
+                                <input type="text" id="sqft" name="sqft" class="form-control" placeholder="Square Feet">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="acres" class="form-label">Acres</label>
+                                <input type="text" id="acres" name="acres" class="form-control" placeholder="Acres">
+                            </div>
+                        </div>
+                        
+                        <!-- Days Listed & Refinement -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="max-days" class="form-label">Max Days Listed</label>
+                                <input type="text" id="max-days" name="add" class="form-control" placeholder="Max Days Listed">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="search-refinement" class="form-label">Refinement</label>
+                                <select id="search-refinement" name="searchRefinement[]" class="form-control" multiple>
+                                    <option value="amin_photocount">Has Image</option>
+                                    <option value="wvt">Has Virtual Tour</option>
+                                    <option value="woh">Has Open House</option>
+                                    <option value="fl">Featured Listings</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Buttons -->
+                        <div class="button-container">
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu.classList.contains('open')) {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = '';
+            } else {
+                mobileMenu.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Tab navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.search-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Get tab text to determine which form to show
+                    const tabText = this.textContent.trim();
+                    
+                    // You can implement different forms for each tab if needed
+                    if (tabText === 'Listing ID') {
+                        window.location.href = 'https://mlspalmbeach.lindaolsson.com/idx/search/listingid';
+                    } else if (tabText === 'Address') {
+                        window.location.href = 'https://mlspalmbeach.lindaolsson.com/idx/search/address';
+                    } else if (tabText === 'Map Search') {
+                        window.location.href = 'https://mlspalmbeach.lindaolsson.com/idx/map/mapsearch';
+                    }
+                });
+            });
+            
+            // Initialize multiple select fields
+            const multiSelects = document.querySelectorAll('select[multiple]');
+            multiSelects.forEach(select => {
+                // This is a simple styling enhancement - in a real implementation
+                // you might want to add a proper multi-select library like Select2
+                select.size = Math.min(4, select.options.length);
+            });
+            
+            // Hide any additional IDX elements that might be dynamically added
+            function hideAdditionalIdxElements() {
+                // Get all elements with IDs starting with 'IDX-'
+                const idxElements = document.querySelectorAll('div[id^="IDX-"]');
+                
+                idxElements.forEach(element => {
+                    // If the element is not our custom element and not within our container
+                    if (element.id !== 'custom-IDX-main' && 
+                        element.id !== 'idx-form-container' && 
+                        !document.querySelector('.idx-container-wrapper').contains(element)) {
+                        element.style.display = 'none';
+                        }
+                    });
+                }
+                
+            // Call initially and set up a mutation observer to catch dynamically added elements
+            hideAdditionalIdxElements();
+            
+            // Create a MutationObserver to watch for DOM changes
+                const observer = new MutationObserver(function(mutations) {
+                hideAdditionalIdxElements();
+            });
+            
+            // Start observing the document with the configured parameters
+            observer.observe(document.body, { 
+                childList: true, 
+                subtree: true 
+            });
+        });
+    </script>
+</body>
+</html>

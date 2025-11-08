@@ -82,10 +82,10 @@ export default function ConciergePage() {
               <p className="text-gray-800 text-xl leading-relaxed mb-8">
                 We are committed to our customers...We guide buyers and sellers through the sale or selection of their home, condominium, or land with professionalism! Whether you are buying or selling let us put our expertise to work for you!
               </p>
-              <Link href="/about-us" className="text-2xl text-[#1b4e1f] font-semibold hover:underline block mb-6">
+              <Link href="https://www.palmbeachdailynews.com/story/news/local/2014/04/21/lifelong-commitment/9663911007/" target="_blank" rel="noopener noreferrer" className="text-2xl text-[#1b4e1f] font-semibold hover:underline block mb-6">
                 A Lifelong Commitment, Click here to read more.
               </Link>
-              <Link href="/testimonials" className="text-2xl text-[#1b4e1f] font-semibold hover:underline block mb-6">
+              <Link href="/testimonials" target="_blank" rel="noopener noreferrer" className="text-2xl text-[#1b4e1f] font-semibold hover:underline block mb-6">
                 Click here to view our testimonials from satisfied customers.
               </Link>
             </div>

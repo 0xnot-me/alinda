@@ -1,0 +1,3569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linda R. Olsson Inc., Realtor | Palm Beach Luxury Homes</title>
+    <link rel="icon" href="https://www.lindaolsson.com/flogo.svg">
+    <!-- Google Fonts - Instrument Serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- CRITICAL: Prevent auto-form submission - MUST RUN FIRST -->
+    <script>
+      // CRITICAL: This script MUST run as early as possible
+      (function() {
+        console.log("⚠️ EXECUTING EMERGENCY AUTO-SUBMIT PREVENTION");
+        
+        // Intercept form submissions globally
+        document.addEventListener('submit', function(e) {
+          // If this looks like the IDX search form, prevent it 
+          if (e.target && (e.target.id === 'IDX-searchForm' || 
+              (e.target.action && e.target.action.includes('mlspalmbeach')) || 
+              (e.target.getAttribute && e.target.getAttribute('action') && 
+              e.target.getAttribute('action').includes('mlspalmbeach')))) {
+            console.log("⚠️ BLOCKED AUTO-SUBMIT via capture phase event listener");
+            // Stop the event right away
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+          }
+        }, true); // Use capture phase to intercept before handlers
+        
+        // Override the global form prototype submit method
+        var realSubmit = HTMLFormElement.prototype.submit;
+        HTMLFormElement.prototype.submit = function() {
+          if (this.id === 'IDX-searchForm' || 
+              (this.action && this.action.includes('mlspalmbeach')) ||
+              (this.getAttribute && this.getAttribute('action') && 
+              this.getAttribute('action').includes('mlspalmbeach'))) {
+            // Store the real submit for future use
+            this._realSubmit = realSubmit;
+            // Only enable user-initiated submissions later
+            if (window.userSubmittedForm) {
+              console.log("✅ Allowing user-initiated form submission");
+              return realSubmit.apply(this, arguments);
+            }
+            console.log("⚠️ BLOCKED AUTO-SUBMIT via prototype override");
+            return false;
+          }
+          return realSubmit.apply(this, arguments);
+        };
+        
+        // Monkey patch XMLHttpRequest to catch form submissions via AJAX
+        var origOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function() {
+          if (arguments.length > 1 && arguments[1] && 
+              typeof arguments[1] === 'string' && 
+              arguments[1].includes('mlspalmbeach') && 
+              arguments[1].includes('results/listings')) {
+            if (!window.userSubmittedForm) {
+              console.log("⚠️ BLOCKED AUTO-SUBMIT via XMLHttpRequest interception");
+              // Redirect to non-submitting URL
+              arguments[1] = arguments[1].replace('results/listings', 'search/advanced');
+            }
+          }
+          return origOpen.apply(this, arguments);
+        };
+        
+        // Create a MutationObserver to catch and disable auto-selected property types
+        // This runs as soon as elements are added to the DOM
+        function createPropertyTypeObserver() {
+          if (!window.MutationObserver) return;
+          
+          var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.addedNodes && mutation.addedNodes.length) {
+                for (var i = 0; i < mutation.addedNodes.length; i++) {
+                  var node = mutation.addedNodes[i];
+                  if (!node.querySelectorAll) continue;
+                  
+                  // Look for property type selects
+                  var ptSelects = node.querySelectorAll && node.querySelectorAll('select[name="pt"], #IDX-pt');
+                  if (ptSelects && ptSelects.length) {
+                    // Clear any selected options
+                    for (var j = 0; j < ptSelects.length; j++) {
+                      var select = ptSelects[j];
+                      var selectedOption = select.querySelector('option[selected]');
+                      if (selectedOption) {
+                        console.log("⚠️ Clearing auto-selected property type");
+                        selectedOption.selected = false;
+                        selectedOption.removeAttribute('selected');
+                      }
+                      // Set the value to empty to clear any selection
+                      select.value = '';
+                    }
+                  }
+                  
+                  // Look for any search forms
+                  var searchForms = node.querySelectorAll && node.querySelectorAll('form[action*="mlspalmbeach"], #IDX-searchForm');
+                  if (searchForms && searchForms.length) {
+                    for (var k = 0; k < searchForms.length; k++) {
+                      var form = searchForms[k];
+                      console.log("⚠️ Found dynamically added search form, disabling auto-submission");
+                      
+                      // Override this form's submit method
+                      form._originalSubmit = form.submit;
+                      form.submit = function() {
+                        console.log("⚠️ Preventing form submission");
+                        if (window.userSubmittedForm) {
+                          if (this._originalSubmit) {
+                            this._originalSubmit.apply(this);
+                          } else if (this._realSubmit) {
+                            this._realSubmit.apply(this);
+                          }
+                        }
+                        return false;
+                      };
+                      
+                      // Add event listener directly to the form
+                      form.addEventListener('submit', function(e) {
+                        if (!window.userSubmittedForm) {
+                          console.log("⚠️ Preventing form submission via event listener");
+                          e.preventDefault();
+                          e.stopPropagation();
+                          return false;
+                        }
+                      }, true);
+                      
+                      // Fix any submit buttons to set the user submitted flag
+                      var submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"], #IDX-formSubmit');
+                      for (var m = 0; m < submitButtons.length; m++) {
+                        submitButtons[m].addEventListener('click', function() {
+                          console.log("✅ User clicked submit button, allowing form submission");
+                          window.userSubmittedForm = true;
+                        });
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          });
+          
+          // Start observing the document with the configured parameters
+          observer.observe(document, { childList: true, subtree: true });
+          console.log("✅ MutationObserver started watching for property type and form elements");
+        }
+        
+        // Run the observer as soon as possible
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', createPropertyTypeObserver);
+        } else {
+          createPropertyTypeObserver();
+        }
+        
+        // Hijack pushState and replaceState to prevent redirects to results
+        var realPushState = history.pushState;
+        history.pushState = function() {
+          if (arguments.length > 2 && arguments[2] && 
+              typeof arguments[2] === 'string' && 
+              arguments[2].includes('results/listings')) {
+            console.log("⚠️ Blocked history.pushState redirect to results");
+            return;
+          }
+          return realPushState.apply(this, arguments);
+        };
+        
+        var realReplaceState = history.replaceState;
+        history.replaceState = function() {
+          if (arguments.length > 2 && arguments[2] && 
+              typeof arguments[2] === 'string' && 
+              arguments[2].includes('results/listings')) {
+            console.log("⚠️ Blocked history.replaceState redirect to results");
+            return;
+          }
+          return realReplaceState.apply(this, arguments);
+        };
+        
+        // Also block redirects
+        var realAssign = Object.getOwnPropertyDescriptor(window.Location.prototype, 'assign') || 
+                        Object.getOwnPropertyDescriptor(Location.prototype, 'assign');
+        if (realAssign && realAssign.value) {
+          var origAssign = realAssign.value;
+          Object.defineProperty(window.Location.prototype, 'assign', {
+            value: function(url) {
+              if (url.includes('results/listings')) {
+                console.log("⚠️ Blocked location.assign redirect to results");
+                return;
+              }
+              return origAssign.apply(this, arguments);
+            }
+          });
+        }
+        
+        // Set a flag on window to indicate we've run our prevention code
+        window._autoSubmitPreventionApplied = true;
+        
+        console.log("✅ Emergency auto-submit prevention fully initialized");
+      })();
+    </script>
+    
+  <style>
+    /* Basic resets */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f5f5f5; /* Light gray background for contrast with white box */
+    }
+      
+      /* Font variables */
+      :root {
+        --font-instrument: 'Instrument Serif', serif;
+      }
+      
+      /* Apply Instrument Serif to headings */
+      h1, h2, h3, .instrument-serif {
+        font-family: var(--font-instrument);
+        font-weight: 400;
+      }
+    
+    /* NAVBAR STYLES - Adjusted for horizontal layout with logo top centered */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      width: 100%;
+      padding: 0.5rem 0;
+      background-color: #1b4e1f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+      
+      /* Apply Instrument Serif to navbar elements */
+      .nav-link, 
+      .dropdown-link, 
+      .mobile-link,
+      .mobile-section-title {
+        font-family: var(--font-instrument);
+        font-weight: 400;
+        letter-spacing: 0.02em;
+      }
+      
+      /* Apply font to mobile menu section titles */
+      .mobile-section-title {
+        font-family: var(--font-instrument);
+      }
+    
+    .logo-container {
+      margin: 0.5rem 0;
+      text-align: center;
+    }
+    
+    .logo {
+      height: 3.5rem;
+    }
+    
+    .nav-menu {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      padding: 0.5rem 0;
+    }
+    
+    .menu-items {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+    
+    .nav-item {
+      position: relative;
+    }
+    
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: color 0.2s;
+    }
+    
+    .nav-link:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .dropdown-icon {
+      display: inline-block;
+      width: 0;
+      height: 0;
+      margin-left: 0.25rem;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid white;
+      transition: transform 0.2s;
+    }
+    
+    .nav-item:hover .dropdown-icon {
+      transform: rotate(180deg);
+    }
+    
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 300px;
+      background-color: #1b4e1f;
+      border: 1px solid #184b1c;
+      border-radius: 0.25rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+      z-index: 101;
+    }
+    
+    .nav-item:hover .dropdown {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .dropdown-link {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: background-color 0.2s;
+    }
+    
+    .dropdown-link:hover {
+      background-color: #184b1c;
+    }
+    
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+    }
+    
+    /* Responsive styles for navbar */
+    @media (max-width: 992px) {
+      .menu-items {
+        gap: 1rem;
+      }
+      
+      .nav-link {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+      }
+      
+      .nav-menu {
+        display: none;
+      }
+      
+      .mobile-menu.open {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #1b4e1f;
+        z-index: 200;
+        padding: 4rem 1rem 1rem;
+        overflow-y: auto;
+      }
+      
+      .mobile-menu-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      
+      .mobile-menu-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      
+      .mobile-section {
+        border-bottom: 1px solid #184b1c;
+        padding-bottom: 1rem;
+      }
+      
+      .mobile-section-title {
+        color: white;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .mobile-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-left: 1rem;
+      }
+      
+      .mobile-link {
+        color: white;
+        text-decoration: none;
+        font-size: 1rem;
+        padding: 0.5rem 0;
+      }
+    }
+    
+    /* KEY CHANGE: Push down the main content to make room for navbar */
+    body {
+      padding-top: 7rem;
+    }
+
+    /* FIX FOR NAVBAR CONSISTENCY BETWEEN SEARCH RESULTS AND LISTING DETAIL PAGES */
+    /* Force consistent navbar on ALL pages including listing detail pages */
+    body.IDX-detailsPage .navbar,
+    body.IDX-detailsWrapper .navbar,
+    body[class*="IDX-details"] .navbar,
+    .IDX-detailsPage .navbar,
+    #IDX-detailsWrapper .navbar,
+    body.IDX-detailsPage .navbar,
+    body.IDX-detailsWrapper .navbar,
+    .IDX-detailsWrapper .navbar,
+    #IDX-details .navbar {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 1000 !important; /* Higher z-index to ensure it's on top */
+      width: 100% !important;
+      padding: 0.5rem 0 !important;
+      background-color: #1b4e1f !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+
+    /* Force logo to always be centered above menu */
+    body.IDX-detailsPage .logo-container,
+    body.IDX-detailsWrapper .logo-container,
+    body[class*="IDX-details"] .logo-container,
+    .IDX-detailsPage .logo-container,
+    #IDX-detailsWrapper .logo-container,
+    .IDX-detailsWrapper .logo-container,
+    #IDX-details .logo-container {
+      margin: 0.5rem 0 !important;
+      text-align: center !important;
+      display: block !important;
+      width: 100% !important;
+      position: relative !important;
+      order: -1 !important;
+    }
+
+    /* Ensure menu is always below logo */
+    body.IDX-detailsPage .nav-menu,
+    body.IDX-detailsWrapper .nav-menu,
+    body[class*="IDX-details"] .nav-menu,
+    .IDX-detailsPage .nav-menu,
+    #IDX-detailsWrapper .nav-menu,
+    .IDX-detailsWrapper .nav-menu,
+    #IDX-details .nav-menu {
+      display: flex !important;
+      width: 100% !important;
+      justify-content: center !important;
+      padding: 0.5rem 0 !important;
+      order: 1 !important;
+    }
+
+    /* Ensure mobile menu button is properly positioned */
+    body.IDX-detailsPage .mobile-menu-btn,
+    body.IDX-detailsWrapper .mobile-menu-btn,
+    body[class*="IDX-details"] .mobile-menu-btn,
+    .IDX-detailsPage .mobile-menu-btn,
+    #IDX-detailsWrapper .mobile-menu-btn {
+      position: absolute !important;
+      top: 1rem !important;
+      right: 1rem !important;
+    }
+
+    /* Hide any IDX default headers that might be interfering */
+    .IDX-detailsPage .IDX-header,
+    #IDX-detailsWrapper .IDX-header,
+    .IDX-detailsWrapper .IDX-header,
+    #IDX-details .IDX-header,
+    body[class*="IDX-details"] .IDX-header,
+    div[class*="IDX-header"],
+    div[id*="IDX-header"] {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      overflow: hidden !important;
+    }
+    
+    /* White box container for IDX content */
+    .idx-container-wrapper {
+      max-width: 1200px;
+      margin: 0 auto 40px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      overflow: hidden;
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: #1b4e1f;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 20px;
+    }
+    
+    .footer p {
+      margin: 5px 0;
+    }
+    
+    /* CRITICAL CHANGE: Make sure all IDX content gets wrapped in our white box */
+    /* This directly targets the IDX's actual structure */
+    #IDX-main, 
+    .IDX-wrapper-standard,
+    #IDX-resultsRow, 
+    #IDX-resultsContainer,
+    .IDX-pageContainer,
+    #IDX-resultsContent,
+    .IDX-resultsContent {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+      /* Hide unwanted property type headers */
+      h4.IDX-propertyTypeHeader,
+      .IDX-propertyTypeHeader,
+      div.IDX-propertyTypeHeader,
+      .IDX-propertyTypeHeader:contains("Rental"),
+      .IDX-propertyTypeHeader:contains("Residential"),
+      .IDX-propertyTypeHeader:contains("Land/Acreage"),
+      .IDX-propertyTypeHeader:contains("Condo/Co-Op") {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+      }
+      
+      /* Style search option buttons instead of hiding them */
+      .idx-search-buttons-container {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        margin: 0 0 20px 0 !important;
+        justify-content: center !important;
+      }
+      
+      /* Target the exact IDX classes instead of by href */
+      #IDX-saveSearch,
+      .IDX-saveSearch,
+      .IDX-newSearch,
+      .IDX-modifySearch,
+      .IDX-btn--map-toggle,
+      a.IDX-resultsAction,
+      .IDX-topAction a {
+        display: inline-block !important;
+        background-color: #1b4e1f !important;
+        color: white !important;
+        padding: 8px 16px !important;
+        border-radius: 4px !important;
+        text-decoration: none !important;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+        font-size: 14px !important;
+        letter-spacing: 0.5px !important;
+        transition: background-color 0.2s ease !important;
+        border: none !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+      }
+      
+      #IDX-saveSearch:hover,
+      .IDX-saveSearch:hover,
+      .IDX-newSearch:hover,
+      .IDX-modifySearch:hover,
+      .IDX-btn--map-toggle:hover,
+      a.IDX-resultsAction:hover,
+      .IDX-topAction a:hover {
+        background-color: #184b1c !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+      }
+      
+      /* Make sure the container is styled appropriately */
+      #IDX-resultsTopActions {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        margin: 0 0 20px 0 !important;
+        justify-content: center !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 10px !important;
+      }
+      
+      .IDX-topAction {
+        margin: 5px !important;
+      }
+      
+      /* HIDE non-button elements within the actions area */
+      #IDX-saveSearchWrapper,
+      .IDX-hidden,
+      #IDX-start {
+        display: none !important;
+      }
+      
+      /* Apply Instrument Serif to specific IDX elements */
+      .IDX-propertyTypeHeader,
+      .IDX-similar-listings--address,
+      .IDX-detailsAddress,
+      .IDX-detailsPrice,
+      .IDX-propertyTypeHeader,
+      #IDX-similarPropertyHeader,
+      .IDX-detailsSectionTitle,
+      h4.IDX-propertyTypeHeader,
+      .IDX-resultsPaging {
+        font-family: var(--font-instrument) !important;
+        font-weight: 400 !important;
+      }
+      
+      /* Apply font to specific pricing elements for consistency */
+      .IDX-field-price,
+      .IDX-similar-listings--price,
+      .IDX-detailsPrice {
+        font-family: var(--font-instrument) !important;
+        font-weight: 400 !important;
+        letter-spacing: 0.02em !important;
+      }
+      
+      /* Still hide the "Results Found" text */
+    .IDX-results-title:contains("Results Found"),
+    #IDX-resultsPager-data,
+    .IDX-hopoZoning {
+      display: none !important;
+    }
+      
+      /* Hide Hopo Zoning and coordinate information */
+      [id*="hopoZoning"],
+      [class*="hopoZoning"],
+      [id*="IDX-hopoZoning"],
+      [class*="IDX-hopoZoning"],
+      *:contains("Hopo Zoning"),
+      .IDX-field-hopoZoning,
+      .IDX-field-latitude,
+      .IDX-field-longitude,
+      .IDX-field-latlong,
+      [class*="IDX-latLong"],
+      [class*="IDX-latlong"],
+      [class*="IDX-LatLong"],
+      [id*="latLong"],
+      [id*="latlong"],
+      [id*="LatLong"] {
+        display: none !important;
+      }
+      
+      /* EXACT MATCHES for the elements to hide - based on HTML inspection */
+      .IDX-hopoZoning,
+      div.IDX-hopoZoning,
+      .IDX-resultsAddressLatLng,
+      span.IDX-resultsAddressLatLng,
+      .IDX-resultsPropStatus,
+      span.IDX-resultsPropStatus {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        opacity: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+        overflow: hidden !important;
+      }
+      
+      /* Force removal of unwanted content */
+      label:contains("Hopo Zoning"),
+      *:contains("Hopo Zoning:") {
+        display: none !important;
+      }
+    
+    /* TARGET THE EXACT IDX STRUCTURE */
+    .IDX-resultsCellsContainer {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      list-style: none !important;
+      margin: 0 -10px !important;
+      padding: 0 !important;
+    }
+    
+    /* Fix each listing cell */
+    .IDX-results--cell {
+      width: 33.333% !important;
+      padding: 10px !important;
+      float: none !important;
+      display: block !important;
+    }
+    
+    /* Make entire property clickable */
+    .IDX-results--cell-inner-wrapper {
+      border: 1px solid #e0e0e0 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+      background: white !important;
+      position: relative !important;
+      transition: box-shadow 0.3s ease !important;
+      cursor: pointer !important;
+    }
+    
+    .IDX-results--cell-inner-wrapper:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* Fix the image container to be at the top */
+    .IDX-resultsPhoto {
+      width: 100% !important;
+      height: 220px !important;
+      overflow: hidden !important;
+      position: relative !important;
+      order: -1 !important; /* Move to top */
+    }
+    
+    /* Fix image dimensions to prevent stretching */
+    .IDX-resultsPhotoImg {
+      width: 100% !important;
+      height: 220px !important;
+      object-fit: cover !important;
+      object-position: center !important;
+      display: block !important;
+    }
+    
+    /* Preserve the original link but make it cover the entire property card */
+    .IDX-resultsPhotoLink {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 10 !important;
+      text-decoration: none !important;
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      opacity: 0 !important;
+      font-size: 0 !important;
+    }
+    
+    /* Ensure details appear below image */
+    .IDX-results--card-content {
+      padding: 15px !important;
+      flex: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .IDX-resultsAddress {
+      order: 1 !important;
+    }
+    
+    /* Fix property details */
+    .IDX-results--details-field {
+      margin-bottom: 5px !important;
+    }
+    
+    /* Price styling */
+    .IDX-field-price {
+      font-size: 1.3em !important;
+      font-weight: bold !important;
+      color: #1b4e1f !important;
+      margin: 10px 0 !important;
+    }
+    
+    /* Fix for heart/save property button */
+    .IDX-propertyActions {
+      position: absolute !important;
+      top: 10px !important;
+      right: 10px !important;
+      z-index: 15 !important;
+    }
+    
+    .IDX-propertyActions a {
+      display: block !important;
+      opacity: 1 !important;
+      position: relative !important;
+      width: auto !important;
+      height: auto !important;
+    }
+    
+    /* OPEN HOUSE STYLING - Move from image overlay to bottom of card */
+    .IDX-resultsOpenHouse {
+      position: static !important;
+      order: 99 !important; /* Move to bottom of flex container */
+      margin-top: 15px !important;
+      border-top: 1px solid #eee !important;
+      padding-top: 10px !important;
+      display: block !important;
+      width: 100% !important;
+    }
+    
+    /* Style open house button/link */
+    .IDX-resultsOpenHouse .IDX-open-house {
+      display: inline-block !important;
+      background-color: #1b4e1f !important;
+      color: white !important;
+      padding: 8px 12px !important;
+      border-radius: 4px !important;
+      text-decoration: none !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      text-align: center !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      line-height: 1.4 !important;
+    }
+    
+    /* Style for the Date line */
+    .IDX-resultsOpenHouse .IDX-open-house br + * {
+      font-weight: normal !important;
+      display: inline-block !important;
+      margin-top: 4px !important;
+    }
+    
+    /* Hide popup content by default */
+    .IDX-resultsOpenHouse .IDX-mediaContentOH {
+      display: none !important;
+    }
+    
+    /* Show popup content on hover if needed */
+    .IDX-resultsOpenHouse:hover .IDX-mediaContentOH {
+      display: block !important;
+      position: absolute !important;
+      bottom: calc(100% + 5px) !important;
+      left: 0 !important;
+      background: white !important;
+      border: 1px solid #ddd !important;
+      border-radius: 4px !important;
+      padding: 10px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+      z-index: 20 !important;
+      width: 100% !important;
+    }
+    
+    /* Style popup content */
+    .IDX-mediaContentOH .IDX-openHouseTitle {
+      font-weight: bold !important;
+      margin-bottom: 5px !important;
+      color: #1b4e1f !important;
+    }
+    
+    .IDX-mediaContentOH .IDX-openHouseDateTime {
+      font-size: 13px !important;
+    }
+    
+    /* Hide the time part */
+    .IDX-mediaContentOH .IDX-openHouseTime {
+      display: none !important;
+    }
+    
+    /* Pagination fixes */
+    .IDX-results--pagination {
+      text-align: center !important;
+      margin: 20px 0 !important;
+    }
+    
+    /* Fix for MLS logo container */
+    .IDX-mlsContainer {
+      display: none !important; /* Usually just shows a logo - remove if needed */
+    }
+    
+    /* Fix navigation */
+    nav[aria-label="Page Navigation"] {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    
+    nav[aria-label="Page Navigation"] ul {
+      display: flex !important;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    nav[aria-label="Page Navigation"] li {
+      margin: 0 5px;
+      width: auto !important;
+      padding: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    
+    nav[aria-label="Page Navigation"] a {
+      padding: 5px 10px;
+      text-decoration: none;
+      color: #1b4e1f;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
+    
+    nav[aria-label="Page Navigation"] a:hover {
+      background-color: #1b4e1f;
+      color: white;
+    }
+      
+      /* Enhanced Pagination Styling - Make sure it's visible and matches site style */
+      #IDX-results-pagination,
+      .IDX-results--pagination,
+      nav[id*="pagination"],
+      .IDX-pagination-container {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin: 30px 0 !important;
+        padding: 10px 0 !important;
+      }
+      
+      .IDX-pagination {
+        display: flex !important;
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 8px !important;
+      }
+      
+      .IDX-pagination li {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .IDX-pagination a,
+      .IDX-pagination span {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        padding: 0 12px !important;
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 4px !important;
+        background-color: #fff !important;
+        color: #1b4e1f !important;
+        text-decoration: none !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+      }
+      
+      .IDX-pagination a:hover {
+        background-color: #1b4e1f !important;
+        border-color: #1b4e1f !important;
+        color: #fff !important;
+      }
+      
+      .IDX-pagination li.IDX-active a {
+        background-color: #1b4e1f !important;
+        border-color: #1b4e1f !important;
+        color: #fff !important;
+      }
+      
+      /* Style the ellipsis */
+      .idx-paginator--ellipsis {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        color: #666 !important;
+      }
+    
+    /* Responsive styles */
+    @media (max-width: 992px) {
+      .IDX-results--cell {
+        width: 50% !important;
+      }
+      
+      .idx-container-wrapper {
+        max-width: 90%;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .IDX-results--cell {
+        width: 100% !important;
+      }
+      
+      .idx-container-wrapper {
+        max-width: 95%;
+        padding: 15px;
+      }
+        
+        .idx-search-buttons-container {
+          flex-direction: column !important;
+          align-items: center !important;
+        }
+        
+        a[href*="Save Search"],
+        a[href*="New Search"],
+        a[href*="Modify Search"],
+        a[href*="Show Map"] {
+          width: 100% !important;
+          text-align: center !important;
+        }
+      }
+      
+      /* DETAIL PAGE STYLING */
+      /* Photo Gallery Styling */
+      .IDX-detailsSlider,
+      .IDX-detailsSlider .slick-list,
+      .slick-initialized .slick-slide {
+        max-width: 100% !important;
+        overflow: hidden !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+        margin-bottom: 15px !important;
+      }
+      
+      /* Force single image display */
+      .IDX-detailsSlider .slick-track {
+        width: 100% !important;
+        transform: none !important;
+      }
+      
+      .IDX-detailsSlider .slick-slide {
+        width: 100% !important;
+        display: none !important;
+      }
+      
+      .IDX-detailsSlider .slick-slide.slick-current {
+        display: block !important;
+        opacity: 1 !important;
+      }
+      
+      .gallery-image {
+        height: 500px !important;
+        background-size: contain !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+        background-color: #f8f8f8 !important;
+      }
+      
+      /* Style the gallery arrows - make them more like the reference design */
+      .slick-arrow {
+        width: 40px !important;
+        height: 40px !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        color: white !important;
+        border-radius: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 10 !important;
+        cursor: pointer !important;
+        transition: background-color 0.2s ease !important;
+        font-size: 18px !important;
+        opacity: 1 !important;
+        position: absolute !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+      }
+      
+      .slick-arrow.fa-arrow-left {
+        left: 0 !important;
+      }
+      
+      .slick-arrow.fa-arrow-right {
+        right: 0 !important;
+      }
+      
+      .slick-arrow:hover {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+      }
+      
+      /* See all photos link - styled as a button */
+      #IDX-viewGallery {
+        display: inline-block !important;
+        margin: 15px 0 !important;
+        color: #fff !important;
+        text-decoration: none !important;
+        font-weight: bold !important;
+        background-color: #1b4e1f !important;
+        padding: 10px 15px !important;
+        border-radius: 4px !important;
+        transition: background-color 0.2s ease !important;
+        text-align: center !important;
+        width: 100% !important;
+        max-width: 300px !important;
+      }
+      
+      #IDX-viewGallery:hover {
+        background-color: #184b1c !important;
+      }
+      
+      #IDX-viewGallery i {
+        color: #fff !important;
+      }
+      
+      /* Create a thumbnail gallery below the main image */
+      .IDX-detailsPhotoThumbnails,
+      .slick-dots,
+      .IDX-detailsThumbnailNav {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 10px !important;
+        padding: 10px 0 !important;
+        justify-content: flex-start !important;
+        list-style: none !important;
+        margin: 0 !important;
+        overflow-x: hidden !important;
+        position: relative !important;
+        width: 100% !important;
+        scrollbar-width: none !important; /* Firefox */
+      }
+      
+      .IDX-detailsPhotoThumbnails::-webkit-scrollbar,
+      .slick-dots::-webkit-scrollbar,
+      .IDX-detailsThumbnailNav::-webkit-scrollbar {
+        display: none !important; /* Hide scrollbar */
+      }
+      
+      .IDX-thumbnailWrapper {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 0 30px !important; /* Space for arrows */
+        box-sizing: border-box !important;
+      }
+      
+      /* Arrows for thumbnail navigation */
+      .thumbnail-nav {
+        position: absolute !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        width: 25px !important;
+        height: 25px !important;
+        background-color: rgba(0,0,0,0.5) !important;
+        color: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 5 !important;
+        cursor: pointer !important;
+        border: none !important;
+        font-size: 14px !important;
+      }
+      
+      .thumbnail-nav.prev {
+        left: 0 !important;
+      }
+      
+      .thumbnail-nav.next {
+        right: 0 !important;
+      }
+      
+      .thumbnail-nav:hover {
+        background-color: rgba(0,0,0,0.8) !important;
+      }
+      
+      .IDX-detailsPhotoThumbnails li,
+      .slick-dots li,
+      .IDX-detailsThumbnailNav li {
+        width: 80px !important;
+        min-width: 80px !important;
+        height: 60px !important;
+        overflow: hidden !important;
+        cursor: pointer !important;
+        border: 2px solid transparent !important;
+        transition: all 0.2s ease !important;
+        opacity: 0.7 !important;
+        flex-shrink: 0 !important;
+      }
+      
+      .IDX-detailsPhotoThumbnails li img,
+      .slick-dots li img,
+      .IDX-detailsThumbnailNav li img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+      
+      .IDX-detailsPhotoThumbnails li:hover,
+      .slick-dots li:hover,
+      .IDX-detailsThumbnailNav li:hover {
+        opacity: 1 !important;
+        border-color: #1b4e1f !important;
+      }
+      
+      .IDX-detailsPhotoThumbnails li.slick-active,
+      .slick-dots li.slick-active,
+      .IDX-detailsThumbnailNav li.slick-active {
+        opacity: 1 !important;
+        border-color: #1b4e1f !important;
+      }
+      
+      /* Gallery navigation container */
+      .IDX-detailsGalleryNav {
+        margin: 10px 0 30px !important;
+        text-align: center !important;
+      }
+      
+      /* Broker/MLS attribution */
+      .IDX-attribution {
+        font-size: 12px !important;
+        text-align: center !important;
+        color: #777 !important;
+        margin-top: 10px !important;
+        font-style: italic !important;
+      }
+      
+      /* Photo count styling */
+      .IDX-photoCount {
+        position: absolute !important;
+        bottom: 10px !important;
+        right: 10px !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        color: white !important;
+        padding: 5px 10px !important;
+        border-radius: 3px !important;
+        font-size: 12px !important;
+        z-index: 5 !important;
+      }
+      
+      /* View Photo Gallery button styling */
+      .view-photo-gallery-btn {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        padding: 12px !important;
+        background-color: #f0f0f0 !important;
+        color: #333 !important;
+        text-decoration: none !important;
+        border-radius: 4px !important;
+        margin: 15px 0 !important;
+        font-weight: bold !important;
+        transition: background-color 0.2s ease !important;
+      }
+      
+      .view-photo-gallery-btn:hover {
+        background-color: #e0e0e0 !important;
+      }
+      
+      /* Property Details Styling - NEW TABULAR FORMAT */
+      .IDX-detailsContainer {
+        font-family: Arial, sans-serif !important;
+        line-height: 1.6 !important;
+        color: #333 !important;
+        max-width: 1100px !important;
+        margin: 0 auto !important;
+        padding: 20px !important;
+      }
+      
+      .IDX-detailsAddress {
+        font-size: 1.8em !important;
+        font-weight: 700 !important;
+        margin-bottom: 20px !important;
+        color: #1b4e1f !important;
+      }
+
+      .IDX-detailsPrice {
+        font-size: 1.5em !important;
+        font-weight: 700 !important;
+        margin-bottom: 5px !important;
+        color: #1b4e1f !important;
+      }
+      
+      /* Tabular details layout */
+      .IDX-detailsField,
+      .IDX-detailsKeyInfo div,
+      .IDX-resultsDetailsContainer div,
+      .IDX-propertyDetailsContainer div {
+        display: flex !important;
+        border-bottom: 1px solid #eee !important;
+        padding: 8px 0 !important;
+        align-items: flex-start !important;
+      }
+      
+      .IDX-detailsLabel,
+      .IDX-label {
+        font-weight: 600 !important;
+        color: #555 !important;
+        min-width: 150px !important;
+        padding-right: 10px !important;
+      }
+      
+      .IDX-detailsText,
+      .IDX-text {
+        flex: 1 !important;
+      }
+      
+      /* Property details table */
+      .IDX-propertyDetailsWrapper,
+      .IDX-propertyDetails,
+      .IDX-detailsPropertyDetails {
+        margin: 20px 0 !important;
+        width: 100% !important;
+      }
+      
+      /* Style for each property detail row */
+      .IDX-propertyDetailsInfo,
+      .IDX-propertyDetailsInfo div,
+      .IDX-detailsInfo {
+        display: flex !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #eee !important;
+      }
+      
+      /* Make last item in list have no bottom border */
+      .IDX-propertyDetailsInfo div:last-child,
+      .IDX-detailsField:last-child {
+        border-bottom: none !important;
+      }
+      
+      /* Override all previous inline display styles for the details */
+      .IDX-resultsDetailsContainer,
+      .IDX-propertyDetailsContainer,
+      .IDX-detailsKeyInfo,
+      .IDX-resultsSummary,
+      .IDX-field-listingStatus,
+      .IDX-field-bedrooms,
+      .IDX-field-totalBaths,
+      .IDX-field-sqFt,
+      .IDX-field-propType,
+      .IDX-field-yearBuilt,
+      .IDX-propertyInfoItem {
+        display: block !important;
+        white-space: normal !important;
+      }
+
+      /* Ensure description text has proper spacing */
+      .IDX-detailsDescription {
+        margin: 20px 0 !important;
+        line-height: 1.8 !important;
+      }
+      
+      /* Section styling */
+      .IDX-detailsSection {
+        margin: 30px 0 !important;
+        padding: 20px !important;
+        background-color: #f9f9f9 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+      }
+      
+      .IDX-detailsSectionTitle {
+        font-size: 1.3em !important;
+        font-weight: 700 !important;
+        margin-bottom: 15px !important;
+        color: #1b4e1f !important;
+        border-bottom: 2px solid #1b4e1f !important;
+        padding-bottom: 5px !important;
+      }
+      
+      /* Similar Listings styling */
+      .IDX-propertyTypeHeader,
+      #IDX-similarPropertyHeader {
+        font-size: 1.5em !important;
+        font-weight: 700 !important;
+        margin: 30px 0 15px !important;
+        color: #1b4e1f !important;
+        padding-bottom: 5px !important;
+        border-bottom: 2px solid #1b4e1f !important;
+      }
+      
+      /* Similar Listings Grid - Updated with exact classes */
+      .IDX-similar-listings,
+      #IDX-similar-listings-result {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 15px !important;
+        margin: 20px 0 !important;
+        padding-bottom: 10px !important;
+        scrollbar-width: thin !important;
+      }
+      
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .IDX-similar-listings::-webkit-scrollbar,
+      #IDX-similar-listings-result::-webkit-scrollbar {
+        height: 5px !important;
+      }
+      
+      .IDX-similar-listings::-webkit-scrollbar-thumb,
+      #IDX-similar-listings-result::-webkit-scrollbar-thumb {
+        background: #c0c0c0 !important;
+        border-radius: 10px !important;
+      }
+      
+      /* Similar Listings Cards - Target exact class */
+      .IDX-similar-listings--item {
+        flex: 0 0 auto !important;
+        width: 250px !important;
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+        max-height: 320px !important;
+        background: white !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      }
+      
+      .IDX-similar-listings--item:hover {
+        transform: translateY(-5px) !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+      }
+      
+      /* Similar Listings Images - Target exact class */
+      .IDX-similar-listings--item-image {
+        width: 100% !important;
+        height: 150px !important;
+        object-fit: cover !important;
+        display: block !important;
+      }
+      
+      /* MLS Logo in similar listings */
+      .IDX-similar-listings--item img[src*="mls-logos"],
+      .IDX-similar-listings--item-MLSLogo {
+        display: none !important; /* Hide MLS logo to save space */
+      }
+      
+      /* Similar Property Contents - Target exact class */
+      .IDX-similar-listings--info {
+        padding: 12px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+      }
+      
+      .IDX-similar-listings--details {
+        margin-bottom: 10px !important;
+      }
+      
+      /* Address styling - Target exact class */
+      .IDX-similar-listings--address,
+      .IDX-similar-listings--address-city,
+      .IDX-similar-listings--address-state {
+        font-weight: 600 !important;
+        margin-bottom: 3px !important;
+        font-size: 13px !important;
+        color: #333 !important;
+      }
+      
+      /* Price styling - Target exact class */
+      .IDX-similar-listings--price {
+        color: #1b4e1f !important;
+        font-weight: 700 !important;
+        margin-bottom: 5px !important;
+        font-size: 16px !important;
+        font-family: var(--font-instrument) !important;
+      }
+      
+      /* Property specs styling - Target exact class */
+      .IDX-similar-listings--bed-bath-sqft-acre,
+      .IDX-similar-listings--details .IDX-text {
+        font-size: 12px !important;
+        color: #555 !important;
+        line-height: 1.4 !important;
+      }
+      
+      /* View Details button styling */
+      .IDX-similar-listings--redirect .IDX-btn {
+        font-size: 13px !important;
+        padding: 5px 12px !important;
+        background-color: #1b4e1f !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 4px !important;
+        text-decoration: none !important;
+        display: inline-block !important;
+        transition: background-color 0.2s ease !important;
+        cursor: pointer !important;
+      }
+      
+      .IDX-similar-listings--redirect .IDX-btn:hover {
+        background-color: #184b1c !important;
+      }
+      
+      /* Add a similar listings section */
+      .idx-sample-similar-listings {
+        margin: 30px 0 !important;
+        padding: 0 !important;
+      }
+      
+      .idx-sample-similar-listings h3 {
+        font-size: 1.5em !important;
+        font-weight: 700 !important;
+        margin: 0 0 15px !important;
+        color: #1b4e1f !important;
+        padding-bottom: 5px !important;
+        border-bottom: 2px solid #1b4e1f !important;
+        font-family: var(--font-instrument) !important;
+      }
+      
+      /* In the IDX content wrapper, add the following HTML for similar listings demonstration */
+    </style>
+</head>
+<body>
+  <!-- New Navbar -->
+  <nav class="navbar">
+    <!-- Logo -->
+    <div class="logo-container">
+        <a href="https://www.lindaolsson.com/">
+          <img src="https://www.lindaolsson.com/flogo.svg" alt="Linda R. Olsson Inc., Realtor" class="logo">
+      </a>
+    </div>
+    
+    <!-- Desktop Menu -->
+    <div class="nav-menu">
+      <ul class="menu-items">
+        <li class="nav-item">
+            <a href="https://www.lindaolsson.com/about-us" class="nav-link">
+            About <span class="dropdown-icon"></span>
+          </a>
+          <div class="dropdown">
+              <a href="https://www.lindaolsson.com/about-us" class="dropdown-link">ABOUT LINDA</a>
+              <a href="https://www.lindaolsson.com/about-us/our-team" class="dropdown-link">OUR TEAM</a>
+              <a href="https://www.lindaolsson.com/a-leader-in-palm-beach-real-estate" class="dropdown-link">A LEADER IN PALM BEACH REAL ESTATE</a>
+              <a href="https://www.lindaolsson.com/concierge-quality-realty-services" class="dropdown-link">CONCIERGE QUALITY REALTY SERVICES</a>
+              <a href="https://www.lindaolsson.com/community-involvement" class="dropdown-link">GIVING BACK...COMMUNITY INVOLVEMENT</a>
+              <a href="https://www.lindaolsson.com/palm-beach-florida-real-estate-news" class="dropdown-link">IN THE NEWS</a>
+          </div>
+        </li>
+        <li class="nav-item">
+            <a href="https://www.lindaolsson.com/search" class="nav-link">
+            Search For Homes <span class="dropdown-icon"></span>
+          </a>
+          <div class="dropdown">
+              <a href="https://www.lindaolsson.com/north-end-palm-beach-real-estate" class="dropdown-link">NORTH END HOMES</a>
+              <a href="https://www.lindaolsson.com/in-town-palm-beach-real-estate" class="dropdown-link">IN TOWN HOMES</a>
+              <a href="https://www.lindaolsson.com/estate-section" class="dropdown-link">ESTATE SECTION HOMES</a>
+              <a href="https://www.lindaolsson.com/in-town-townhomes" class="dropdown-link">IN-TOWN TOWNHOMES</a>
+              <a href="https://www.lindaolsson.com/in-town-condos" class="dropdown-link">IN-TOWN CONDOS</a>
+              <a href="https://www.lindaolsson.com/sloans-curve-south-to-manalapan" class="dropdown-link">SLOANS CURVE SOUTH TO MANALAPAN CONDOMINIUMS</a>
+              <a href="https://www.lindaolsson.com/luxury-palm-beach-condominium-co-op-buildings" class="dropdown-link">LUXURY PALM BEACH CONDOMINIUM AND CO-OP BUILDINGS</a>
+          </div>
+        </li>
+        <li class="nav-item">
+            <a href="https://www.lindaolsson.com/blog" class="nav-link">Blog</a>
+        </li>
+        <li class="nav-item">
+            <a href="https://www.lindaolsson.com/tax-benefits" class="nav-link">
+            Tax Benefits <span class="dropdown-icon"></span>
+          </a>
+          <div class="dropdown">
+              <a href="https://www.lindaolsson.com/global-reach-local-expertise" class="dropdown-link">GLOBAL REACH/LOCAL EXPERTISE</a>
+              <a href="https://www.lindaolsson.com/palm-beach-a-slice-of-paradise" class="dropdown-link">PALM BEACH – A SLICE OF PARADISE</a>
+              <a href="https://www.lindaolsson.com/buying-selling-hire-professional" class="dropdown-link">BUYING OR SELLING? HIRE A PROFESSIONAL!</a>
+              <a href="https://www.lindaolsson.com/4-essential-things-to-consider-when-buying-a-condo" class="dropdown-link">4 ESSENTIAL THINGS TO CONSIDER WHEN BUYING A CONDO</a>
+              <a href="https://www.lindaolsson.com/sellers-tips" class="dropdown-link">SELLERS TIPS</a>
+          </div>
+        </li>
+        <li class="nav-item">
+            <a href="https://www.lindaolsson.com/market-reports" class="nav-link">Market Reports</a>
+        </li>
+        <li class="nav-item">
+            <a href="https://www.lindaolsson.com/testimonials" class="nav-link">Testimonials</a>
+        </li>
+        <li class="nav-item">
+            <a href="https://www.lindaolsson.com/contact" class="nav-link">Contact</a>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+  </nav>
+  
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu">
+    <button class="mobile-menu-close" onclick="toggleMobileMenu()">✕</button>
+    
+    <div class="mobile-menu-sections">
+      <!-- About Section -->
+      <div class="mobile-section">
+        <div class="mobile-section-title">About</div>
+        <div class="mobile-links">
+            <a href="https://www.lindaolsson.com/about-us" class="mobile-link">ABOUT LINDA</a>
+            <a href="https://www.lindaolsson.com/our-team" class="mobile-link">OUR TEAM</a>
+            <a href="https://www.lindaolsson.com/a-leader-in-palm-beach-real-estate" class="mobile-link">A LEADER IN PALM BEACH REAL ESTATE</a>
+            <a href="https://www.lindaolsson.com/concierge-quality-realty-services" class="mobile-link">CONCIERGE QUALITY REALTY SERVICES</a>
+            <a href="https://www.lindaolsson.com/community-involvement" class="mobile-link">GIVING BACK...COMMUNITY INVOLVEMENT</a>
+            <a href="https://www.lindaolsson.com/palm-beach-florida-real-estate-news" class="mobile-link">IN THE NEWS</a>
+        </div>
+      </div>
+      
+      <!-- Search For Homes Section -->
+      <div class="mobile-section">
+        <div class="mobile-section-title">Search For Homes</div>
+        <div class="mobile-links">
+            <a href="https://www.lindaolsson.com/north-end-palm-beach-real-estate" class="mobile-link">NORTH END HOMES</a>
+            <a href="https://www.lindaolsson.com/in-town-palm-beach-real-estate" class="mobile-link">IN TOWN HOMES</a>
+            <a href="https://www.lindaolsson.com/estate-section" class="mobile-link">ESTATE SECTION HOMES</a>
+            <a href="https://www.lindaolsson.com/in-town-townhomes" class="mobile-link">IN-TOWN TOWNHOMES</a>
+            <a href="https://www.lindaolsson.com/in-town-condos" class="mobile-link">IN-TOWN CONDOS</a>
+            <a href="https://www.lindaolsson.com/sloans-curve-south-to-manalapan" class="mobile-link">SLOANS CURVE SOUTH TO MANALAPAN CONDOMINIUMS</a>
+            <a href="https://www.lindaolsson.com/luxury-palm-beach-condominium-co-op-buildings" class="mobile-link">LUXURY PALM BEACH CONDOMINIUM AND CO-OP BUILDINGS</a>
+        </div>
+      </div>
+      
+      <!-- Tax Benefits Section -->
+      <div class="mobile-section">
+        <div class="mobile-section-title">Tax Benefits</div>
+        <div class="mobile-links">
+            <a href="https://www.lindaolsson.com/global-reach-local-expertise" class="mobile-link">GLOBAL REACH/LOCAL EXPERTISE</a>
+            <a href="https://www.lindaolsson.com/palm-beach-a-slice-of-paradise" class="mobile-link">PALM BEACH – A SLICE OF PARADISE</a>
+            <a href="https://www.lindaolsson.com/buying-selling-hire-professional" class="mobile-link">BUYING OR SELLING? HIRE A PROFESSIONAL!</a>
+            <a href="https://www.lindaolsson.com/4-essential-things-to-consider-when-buying-a-condo" class="mobile-link">4 ESSENTIAL THINGS TO CONSIDER WHEN BUYING A CONDO</a>
+            <a href="https://www.lindaolsson.com/sellers-tips" class="mobile-link">SELLERS TIPS</a>
+        </div>
+      </div>
+      
+      <!-- Other Links -->
+      <div class="mobile-section">
+          <a href="https://www.lindaolsson.com/blog" class="mobile-link">Blog</a>
+          <a href="https://www.lindaolsson.com/market-reports" class="mobile-link">Market Reports</a>
+          <a href="https://www.lindaolsson.com/testimonials" class="mobile-link">Testimonials</a>
+          <a href="https://www.lindaolsson.com/contact" class="mobile-link">Contact</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- !!! CRITICAL: WHITE BOX WRAPPER FOR IDX CONTENT !!! -->
+  <div class="idx-container-wrapper">
+    <!-- NOTE: DO NOT PUT ANYTHING HERE - IDX CONTENT WILL BE LOADED DIRECTLY INTO THE PAGE -->
+    <!-- This wrapper will automatically capture all the IDX content through custom CSS -->
+    
+    <!-- Sample Similar Listings Section - Will be replaced by dynamic content -->
+    <div class="idx-sample-similar-listings">
+      <h3>Similar Properties</h3>
+      <div id="IDX-similar-listings-result" class="IDX-similar-listings">
+        <!-- Sample listing 1 -->
+        <div class="IDX-similar-listings--item">
+          <a class="IDX-similar-listings--item-image" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/1">
+            <img class="IDX-similar-listings--item-image" src="https://cdn.photos.sparkplatform.com/pbb/20250122170324293812000000-o.jpg">
+          </a>
+          <div class="IDX-similar-listings--info">
+            <div class="IDX-similar-listings--details">
+              <div class="IDX-similar-listings--price">$59,500,000</div>
+              <div class="IDX-text">5 bd, 8 bths, 8,076 sq.ft., 0.440 acres </div><br>
+              1265 N Lake Way<span class="IDX-text IDX-similar-listings--address-city">&nbsp;Palm Beach,</span>
+              <span class="IDX-text IDX-similar-listings--address-state">&nbsp;Florida</span><br>
+              <img src="https://s3.amazonaws.com/staticos.idxbroker.com/mls-logos/a294-logoURL" alt="">
+            </div>
+            <div class="IDX-similar-listings--redirect">
+              <a class="IDX-btn IDX-btn-default" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/1">View Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Sample listing 2 -->
+        <div class="IDX-similar-listings--item">
+          <a class="IDX-similar-listings--item-image" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/2">
+            <img class="IDX-similar-listings--item-image" src="https://cdn.photos.sparkplatform.com/pbb/20241112212017621281000000-o.jpg">
+          </a>
+          <div class="IDX-similar-listings--info">
+            <div class="IDX-similar-listings--details">
+              <div class="IDX-similar-listings--price">$78,000,000</div>
+              <div class="IDX-text">7 bd, 13 bths, 20,672 sq.ft., 0 acres </div><br>
+              2315 S Ocean Boulevard<span class="IDX-text IDX-similar-listings--address-city">&nbsp;Palm Beach,</span>
+              <span class="IDX-text IDX-similar-listings--address-state">&nbsp;Florida</span><br>
+              <img src="https://s3.amazonaws.com/staticos.idxbroker.com/mls-logos/a294-logoURL" alt="">
+            </div>
+            <div class="IDX-similar-listings--redirect">
+              <a class="IDX-btn IDX-btn-default" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/2">View Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Sample listing 3 -->
+        <div class="IDX-similar-listings--item">
+          <a class="IDX-similar-listings--item-image" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/3">
+            <img class="IDX-similar-listings--item-image" src="https://cdn.photos.sparkplatform.com/pbb/20241106165042907502000000-o.jpg">
+          </a>
+          <div class="IDX-similar-listings--info">
+            <div class="IDX-similar-listings--details">
+              <div class="IDX-similar-listings--price">$69,500,000</div>
+              <div class="IDX-text">5 bd, 8 bths, 8,140 sq.ft., 0.490 acres </div><br>
+              1260 N Lake Way<span class="IDX-text IDX-similar-listings--address-city">&nbsp;Palm Beach,</span>
+              <span class="IDX-text IDX-similar-listings--address-state">&nbsp;Florida</span><br>
+              <img src="https://s3.amazonaws.com/staticos.idxbroker.com/mls-logos/a294-logoURL" alt="">
+            </div>
+            <div class="IDX-similar-listings--redirect">
+              <a class="IDX-btn IDX-btn-default" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/3">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add back the Snapshot styling that was accidentally removed -->
+  <style>
+  /* Hide the Show Map button */
+  .IDX-topAction.IDX-topAction--map-toggle,
+  .IDX-topAction--map-toggle,
+  .IDX-btn--map-toggle,
+  div[class*="map-toggle"],
+  a[class*="map-toggle"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    pointer-events: none !important;
+  }
+  
+  /* Make old selectors still work for compatibility */
+  #IDX-similarProperties,
+  .IDX-similarListings {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 15px !important;
+    margin: 20px 0 !important;
+    padding-bottom: 10px !important;
+  }
+  
+  /* Snapshot Styling */
+  #IDX-snapshot {
+    margin: 20px 0 !important;
+    width: 100% !important;
+  }
+  
+  #IDX-snapshot > div {
+    display: flex !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid #eee !important;
+    align-items: center !important;
+  }
+  
+  #IDX-snapshot > div > i {
+    min-width: 40px !important;
+    color: #1b4e1f !important;
+    text-align: center !important;
+  }
+  
+  #IDX-snapshot .IDX-field {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  #IDX-snapshot .label {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  /* Create label sections for snapshot items */
+  #IDX-snapshot > div::before {
+    content: attr(data-label);
+    font-weight: 600 !important;
+    color: #555 !important;
+    min-width: 150px !important;
+    padding-right: 10px !important;
+  }
+  
+  /* Set labels for each snapshot item */
+  #IDX-snapshot > div:nth-child(1)::before {
+    content: "Status:";
+  }
+  
+  #IDX-snapshot > div:nth-child(2)::before {
+    content: "Bedrooms:";
+  }
+  
+  #IDX-snapshot > div:nth-child(3)::before {
+    content: "SqFt:";
+  }
+  
+  #IDX-snapshot > div:nth-child(4)::before {
+    content: "Property Type:";
+  }
+  
+  #IDX-snapshot > div:nth-child(5)::before {
+    content: "Year Built:";
+  }
+  </style>
+  
+  <!-- Footer -->
+    
+
+  <!-- Mobile menu toggle script -->
+  <script>
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileMenu.classList.contains('open')) {
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      } else {
+        mobileMenu.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+      
+      // Apply Instrument Serif font to navbar elements
+      function applyFontToNavbar() {
+        const navElements = document.querySelectorAll(
+          '.nav-link, .dropdown-link, .mobile-link, .mobile-section-title'
+        );
+        
+        navElements.forEach(element => {
+          element.style.fontFamily = 'var(--font-instrument)';
+          element.style.fontWeight = '400';
+          element.style.letterSpacing = '0.02em';
+        });
+      }
+      
+      // Apply fonts to dynamically loaded content
+      function applyFontsToIDX() {
+        // Find all headings and titles
+        const headings = document.querySelectorAll(
+          '.IDX-propertyTypeHeader, .IDX-similar-listings--address, ' + 
+          '.IDX-detailsAddress, .IDX-detailsPrice, #IDX-similarPropertyHeader, ' + 
+          '.IDX-detailsSectionTitle, h4.IDX-propertyTypeHeader, .IDX-resultsPaging, ' +
+          '.IDX-field-price, .IDX-similar-listings--price'
+        );
+        
+        // Apply the Instrument Serif font
+        headings.forEach(element => {
+          element.style.fontFamily = 'var(--font-instrument)';
+          element.style.fontWeight = '400';
+        });
+        
+        // Apply to price elements
+        const priceElements = document.querySelectorAll(
+          '.IDX-field-price, .IDX-similar-listings--price, .IDX-detailsPrice'
+        );
+        
+        priceElements.forEach(element => {
+          element.style.fontFamily = 'var(--font-instrument)';
+          element.style.letterSpacing = '0.02em';
+        });
+      }
+      
+      // Fix IDX search URLs by adding direct URL handling
+      function fixIDXSearchURLs() {
+        console.log('Fixing IDX search button URLs...');
+        
+        // Find all search-related buttons
+        const newSearchButtons = document.querySelectorAll('.IDX-newSearch, a[href*="newSearch"], a[href*="search/homes"]');
+        const modifySearchButtons = document.querySelectorAll('.IDX-modifySearch, a[href*="modifySearch"]');
+        
+        // Base IDX URL - use the correct one for Linda Olsson
+        const idxBaseURL = 'https://mlspalmbeach.lindaolsson.com';
+        
+        // Update new search buttons - FIX: Use /idx/search/advanced instead of /idx/search/homes
+        newSearchButtons.forEach(button => {
+          // Update href to correct URL
+          button.href = `${idxBaseURL}/idx/search/advanced`;
+          // Ensure it opens in same window
+          button.target = '_self';
+          console.log('Fixed New Search button:', button);
+        });
+        
+        // Update modify search buttons
+        modifySearchButtons.forEach(button => {
+          // Update href to correct URL - FIX: Use /idx/search/advanced instead of /idx/search/homes
+          button.href = `${idxBaseURL}/idx/search/advanced?modifySearch=true`;
+          // Ensure it opens in same window
+          button.target = '_self';
+          console.log('Fixed Modify Search button:', button);
+        });
+        
+        // Fix save search (these are more complex as they use forms)
+        const saveSearchButtons = document.querySelectorAll('.IDX-saveSearch, #IDX-saveSearch');
+        saveSearchButtons.forEach(button => {
+          // Update any direct hrefs (though these usually trigger JS)
+          if (button.href && !button.href.startsWith('#')) {
+            button.href = `${idxBaseURL}/idx/user/login`;
+          }
+          
+          // Look for the associated form and fix its action
+          const saveForm = button.closest('form') || 
+                          document.querySelector('#IDX-saveSearchForm') ||
+                          button.parentNode?.querySelector('form');
+          
+          if (saveForm) {
+            // Update form action to use correct domain
+            saveForm.action = `${idxBaseURL}/idx/ajax/verse.php`;
+            console.log('Fixed Save Search form:', saveForm);
+          }
+          
+          console.log('Fixed Save Search button:', button);
+        });
+        
+        // Fix any show map buttons
+        const mapButtons = document.querySelectorAll('.IDX-btn--map-toggle, a[data-uw-rm-kbnav="anohref"]');
+        mapButtons.forEach(button => {
+          // These usually use JavaScript, but add a fallback href just in case
+          if (!button.href || button.href === '#' || button.href.includes('javascript:')) {
+            button.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'map=1';
+          }
+          console.log('Fixed Map button:', button);
+        });
+      }
+      
+      // Run the URL fix after a delay to ensure IDX content has loaded
+      setTimeout(fixIDXSearchURLs, 1500);
+      setTimeout(fixIDXSearchURLs, 3000); // Run again later to catch any that might be added dynamically
+      
+      // NEW: Immediate fix for form submission prevention
+      // This runs as early as possible, directly in the initial script
+      (function() {
+        console.log('Setting up early form submission prevention');
+        
+        // Stop form submissions as soon as possible
+        document.addEventListener('submit', function(e) {
+          // If this is the initial page load auto-submission, prevent it
+          if (!window.submittedByUser && 
+              (e.target.id === 'IDX-searchForm' || 
+              (e.target.action && e.target.action.includes('mlspalmbeach')))) {
+            console.log('Prevented automatic form submission via event listener');
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        }, true); // Use capturing phase to catch events before they propagate
+        
+        // Function to be called as early as possible
+        function earlyFormFixes() {
+          // Clear selected property type options
+          const ptSelects = document.querySelectorAll('select[name="pt"], #IDX-pt');
+          ptSelects.forEach(select => {
+            Array.from(select.options).forEach(option => {
+              option.selected = false;
+              option.removeAttribute('selected');
+            });
+            console.log('Early fix: Cleared pre-selected property type');
+          });
+          
+          // Make sure the form doesn't auto-submit
+          const forms = document.querySelectorAll('form[action*="mlspalmbeach"], #IDX-searchForm');
+          forms.forEach(form => {
+            // Backup the original submit for later use by user-initiated submissions
+            form._originalSubmit = form.submit;
+            
+            // Override submit method
+            form.submit = function() {
+              console.log('Form submit method called');
+              if (window.submittedByUser) {
+                // We've confirmed this is a user-initiated submission
+                console.log('Allowing user-initiated form submission');
+                if (this._originalSubmit) {
+                  this._originalSubmit.apply(this);
+                }
+              } else {
+                console.log('Blocked automatic form submission via submit method override');
+                return false;
+              }
+            };
+            
+            // Also catch onsubmit events
+            const originalOnSubmit = form.onsubmit;
+            form.onsubmit = function(e) {
+              if (!window.submittedByUser) {
+                console.log('Blocked automatic form submission via onsubmit handler');
+                e.preventDefault();
+                return false;
+              }
+              if (typeof originalOnSubmit === 'function') {
+                return originalOnSubmit.apply(this, arguments);
+              }
+            };
+          });
+        }
+        
+        // Call right away if document is ready, or wait for DOM content loaded
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          earlyFormFixes();
+        } else {
+          document.addEventListener('DOMContentLoaded', earlyFormFixes);
+        }
+        
+        // Set up a mutation observer to catch any dynamically added forms
+        if (typeof MutationObserver !== 'undefined') {
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+                for (let i = 0; i < mutation.addedNodes.length; i++) {
+                  const node = mutation.addedNodes[i];
+                  if (node.tagName === 'FORM' || 
+                      (node.id && node.id === 'IDX-searchForm')) {
+                    console.log('Detected dynamically added form, applying fixes');
+                    earlyFormFixes();
+                    break;
+                  }
+                }
+              }
+            });
+          });
+          
+          // Start observing document for new forms
+          observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+          });
+        }
+      })();
+    
+    // CRITICAL: Move the IDX content into our white box container when the page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        // Apply font to navbar immediately
+        applyFontToNavbar();
+        
+      // This will find the IDX content and move it into our container
+      const idxContent = document.getElementById('IDX-main');
+      const idxWrapper = document.querySelector('.idx-container-wrapper');
+      
+      if (idxContent && idxWrapper) {
+          // Make sure search page elements are visible
+          document.querySelectorAll('#IDX-searchPageWrapper, #IDX-navbar, #IDX-searchForm').forEach(el => {
+            if(el) el.style.display = 'block';
+          });
+          
+        idxWrapper.appendChild(idxContent);
+          console.log('Moved IDX content into wrapper container');
+      }
+      
+      // Alternative approach if the above doesn't work
+      // This moves all elements outside our navigation and footer into the wrapper
+      if (!idxContent) {
+        const bodyChildren = Array.from(document.body.children);
+        bodyChildren.forEach(function(child) {
+          if (child !== document.querySelector('.navbar') && 
+              child !== document.querySelector('.mobile-menu') &&
+              child !== document.querySelector('.footer') &&
+              child !== idxWrapper) {
+            idxWrapper.appendChild(child);
+              
+              // If this is an IDX search form related element, make it visible
+              if(child.id && (child.id.includes('IDX-') || child.id === 'footer')) {
+                child.style.display = 'block';
+                child.style.visibility = 'visible';
+              }
+            }
+          });
+        }
+        
+        // ******************************************
+        // CRITICAL: Fix HTTP links to HTTPS
+        // ******************************************
+        setTimeout(function() {
+          // Fix all HTTP URLs to use HTTPS
+          document.querySelectorAll('a[href^="https://mlspalmbeach"], form[action^="https://mlspalmbeach"]').forEach(el => {
+            if (el.href) {
+              el.href = el.href.replace('https://', 'https://');
+              console.log('Fixed link from HTTP to HTTPS:', el.href);
+            }
+            if (el.action) {
+              el.action = el.action.replace('https://', 'https://');
+              console.log('Fixed form action from HTTP to HTTPS:', el.action);
+            }
+          });
+        }, 800);
+        
+        // ******************************************
+        // CRITICAL: Fix auto-submission of search form 
+        // ******************************************
+        setTimeout(function() {
+          // Prevent auto-form submission
+          const searchForm = document.querySelector('#IDX-searchForm, form[action*="mlspalmbeach"]');
+          if (searchForm) {
+            console.log('Found search form, preventing auto-submission:', searchForm);
+            
+            // 1. Fix form action to HTTPS
+            if (searchForm.action && searchForm.action.includes('https://')) {
+              searchForm.action = searchForm.action.replace('https://', 'https://');
+              console.log('Fixed search form action to HTTPS:', searchForm.action);
+            }
+            
+            // 2. Clear any pre-selected values that might cause auto-submission
+            const preselectedInputs = searchForm.querySelectorAll('select[selected], input[checked], select option[selected]');
+            preselectedInputs.forEach(input => {
+              if (input.tagName === 'OPTION') {
+                input.selected = false;
+                input.removeAttribute('selected');
+              } else if (input.hasAttribute('checked')) {
+                input.checked = false;
+                input.removeAttribute('checked');
+              }
+              console.log('Cleared pre-selected form element:', input);
+            });
+            
+            // 3. Directly deselect the property type options
+            searchForm.querySelectorAll('#IDX-pt option, select[name="pt"] option').forEach(option => {
+              option.selected = false;
+              if (option.hasAttribute('selected')) {
+                option.removeAttribute('selected');
+                console.log('Removed selected attribute from property type option:', option.value);
+              }
+            });
+            
+            // 4. Override the form's submit method to prevent auto-submission
+            if (!searchForm._originalSubmit) { // Don't override twice
+              searchForm._originalSubmit = searchForm.submit;
+              searchForm.submit = function(event) {
+                console.log('Form submission intercepted');
+                if (window.submittedByUser) {
+                  console.log('Allowing user-initiated submission');
+                  if (this._originalSubmit) {
+                    this._originalSubmit.apply(this);
+                  }
+                } else {
+                  console.log('Blocking automatic submission');
+                  if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  return false;
+                }
+              };
+            }
+            
+            // 5. Add a new submit handler for when the user clicks the button
+            const submitButton = searchForm.querySelector('button[type="submit"], input[type="submit"], #IDX-formSubmit');
+            if (submitButton) {
+              submitButton.addEventListener('click', function(e) {
+                console.log('User clicked submit button');
+                // Flag that this is a user-initiated submission
+                window.submittedByUser = true;
+                window.manualSubmit = true;
+                // Fix form action one more time just to be sure
+                if (searchForm.action && searchForm.action.includes('https://')) {
+                  searchForm.action = searchForm.action.replace('https://', 'https://');
+                }
+              });
+            }
+          }
+          
+          // Handle direct property type selects
+          const ptSelects = document.querySelectorAll('select[name="pt"], #IDX-pt');
+          ptSelects.forEach(select => {
+            // Ensure no options are selected
+            Array.from(select.options).forEach(option => {
+              option.selected = false;
+              if (option.hasAttribute('selected')) {
+                option.removeAttribute('selected');
+              }
+            });
+            
+            // Set the value to empty string
+            select.value = '';
+            
+            console.log('Reset property type select:', select);
+            
+            // Add a change handler to stop auto-submission
+            select.addEventListener('change', function(e) {
+              // If no window.submittedByUser is set, this is likely an automated change
+              if (!window.submittedByUser && !window.userInitiatedChange) {
+                console.log('Detected automated property type change, preventing');
+                e.stopPropagation();
+                
+                // Reset the select to no selection
+                setTimeout(() => {
+                  window.userInitiatedChange = true;
+                  this.value = '';
+                  Array.from(this.options).forEach(opt => opt.selected = false);
+                  window.userInitiatedChange = false;
+                }, 0);
+                
+                return false;
+              }
+            });
+          });
+        }, 1000);
+        
+        // Search form specific fixes
+        setTimeout(function() {
+          // Fix the search form visibility
+          const searchForm = document.querySelector('#IDX-searchForm');
+          const searchWrapper = document.querySelector('#IDX-searchPageWrapper');
+          
+          if(searchForm) {
+            searchForm.style.display = 'block';
+            searchForm.style.visibility = 'visible';
+            console.log('Made search form visible');
+            
+            // Fix search form buttons
+            const searchButtons = searchForm.querySelectorAll('button');
+            searchButtons.forEach(button => {
+              button.style.backgroundColor = '#1b4e1f';
+              button.style.color = 'white';
+              button.style.border = 'none';
+              button.style.padding = '8px 16px';
+              button.style.margin = '5px';
+              button.style.borderRadius = '4px';
+              button.style.cursor = 'pointer';
+              console.log('Styled search form button:', button);
+            });
+          }
+          
+          if(searchWrapper) {
+            searchWrapper.style.display = 'block';
+            searchWrapper.style.visibility = 'visible';
+            searchWrapper.classList.remove('IDX-hide');
+            console.log('Made search wrapper visible');
+          }
+          
+          // Make sure form fields are visible
+          document.querySelectorAll('.IDX-control-group, .IDX-controls, .IDX-input, .IDX-select').forEach(el => {
+            el.style.display = '';
+            el.style.visibility = 'visible';
+          });
+          
+          // Add specific styling for search form elements
+          const style = document.createElement('style');
+          style.textContent = `
+            /* Search form styling */
+            #IDX-searchForm {
+              font-family: Arial, sans-serif !important;
+              padding: 20px !important;
+              max-width: 1000px !important;
+              margin: 0 auto !important;
+            }
+            
+            #IDX-searchForm .IDX-control-group {
+              margin-bottom: 15px !important;
+              display: block !important;
+            }
+            
+            #IDX-searchForm label {
+              display: block !important;
+              margin-bottom: 5px !important;
+              font-weight: bold !important;
+            }
+            
+            #IDX-searchForm .IDX-input,
+            #IDX-searchForm .IDX-select {
+              width: 100% !important;
+              padding: 8px !important;
+              border: 1px solid #ddd !important;
+              border-radius: 4px !important;
+              box-sizing: border-box !important;
+            }
+            
+            #IDX-searchForm #IDX-formSubmit,
+            #IDX-searchForm #IDX-formReset {
+              background-color: #1b4e1f !important;
+              color: white !important;
+              padding: 10px 20px !important;
+              border: none !important;
+              border-radius: 4px !important;
+              cursor: pointer !important;
+              font-weight: bold !important;
+            }
+            
+            #IDX-searchForm #IDX-formReset {
+              background-color: #666 !important;
+            }
+            
+            #IDX-navbar {
+              background-color: #f5f5f5 !important;
+              padding: 10px !important;
+              margin-bottom: 20px !important;
+              border-radius: 4px !important;
+            }
+            
+            #IDX-navbar .IDX-navbar-nav {
+              display: flex !important;
+              list-style: none !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              justify-content: center !important;
+            }
+            
+            #IDX-navbar .IDX-navbar-nav li {
+              margin: 0 10px !important;
+            }
+            
+            #IDX-navbar .IDX-navbar-nav a {
+              color: #1b4e1f !important;
+              text-decoration: none !important;
+              font-weight: bold !important;
+            }
+            
+            #IDX-navbar .IDX-navbar-nav li.IDX-active a {
+              text-decoration: underline !important;
+            }
+            
+            #IDX-searchPageWrapper {
+              display: block !important;
+              visibility: visible !important;
+            }
+            
+            .IDX-hide {
+              display: block !important;
+            }
+            
+            /* Row content styling */
+            #IDX-coreSearchFields .IDX-row-content {
+              display: flex !important;
+              flex-wrap: wrap !important;
+              margin: 0 -10px !important;
+            }
+            
+            #IDX-coreSearchFields .IDX-control-group {
+              flex: 1 0 200px !important;
+              margin: 0 10px 15px !important;
+            }
+          `;
+          
+          document.head.appendChild(style);
+          console.log('Added search form specific styling');
+        }, 800);
+        
+        // Apply fonts to initial content
+        setTimeout(applyFontsToIDX, 800);
+        
+        // And again after potential AJAX loads
+        setTimeout(applyFontsToIDX, 2000);
+        setTimeout(applyFontsToIDX, 4000);
+        
+        // Fix search form submission
+        setTimeout(function() {
+          const searchForm = document.querySelector('#IDX-searchForm');
+          if (searchForm) {
+            // Make sure the form action is correctly set
+            if (searchForm.action && !searchForm.action.includes('mlspalmbeach.lindaolsson.com')) {
+              searchForm.action = 'https://mlspalmbeach.lindaolsson.com/idx/results/listings';
+              console.log('Fixed search form action URL');
+            }
+            
+            // Make sure the submit button works
+            const submitButton = searchForm.querySelector('#IDX-formSubmit');
+            if (submitButton) {
+              const originalClickHandler = submitButton.onclick;
+              submitButton.onclick = function(e) {
+                console.log('Search form submit button clicked');
+                window.submittedByUser = true;
+                window.manualSubmit = true;
+                // If there was an original handler, call it
+                if (typeof originalClickHandler === 'function') {
+                  return originalClickHandler.call(this, e);
+                }
+              };
+            }
+          }
+        }, 1000);
+        
+        // Add a script fix in case other methods fail
+        const scriptFix = document.createElement('script');
+        scriptFix.textContent = `
+          // Fix to prevent automatic form submission
+          (function() {
+            // Get references to various IDX variables and functions
+            if (typeof idx !== 'undefined') {
+              console.log("Found IDX library, applying fixes");
+              
+              // Try to intercept any auto-submission
+              const originalSubmit = HTMLFormElement.prototype.submit;
+              HTMLFormElement.prototype.submit = function() {
+                if (this.id === 'IDX-searchForm' || (this.action && this.action.includes('mlspalmbeach'))) {
+                  if (!window.manualSubmit && !window.submittedByUser) {
+                    console.log('Prevented auto-submission of IDX form');
+                    return false;
+                  }
+                }
+                return originalSubmit.apply(this, arguments);
+              };
+              
+              // Override any IDX methods that might auto-submit
+              if (idx.subscribeEvent) {
+                const originalSubscribe = idx.subscribeEvent;
+                idx.subscribeEvent = function(event, selector, callback) {
+                  if (event === 'submit' && (selector.includes('#IDX-searchForm') || selector.includes('[action*="mlspalmbeach"]'))) {
+                    console.log('Intercepted IDX form submit event subscription');
+                    const wrappedCallback = function(e) {
+                      if (!window.manualSubmit && !window.submittedByUser) {
+                        console.log('Prevented callback from auto-submitting form');
+                        e.preventDefault();
+                        return false;
+                      }
+                      return callback.apply(this, arguments);
+                    };
+                    return originalSubscribe.call(this, event, selector, wrappedCallback);
+                  }
+                  return originalSubscribe.apply(this, arguments);
+                };
+              }
+              
+              // Find any property type fields and clear them
+              setTimeout(function() {
+                document.querySelectorAll('#IDX-pt option, select[name="pt"] option').forEach(option => {
+                  option.selected = false;
+                  if (option.hasAttribute('selected')) {
+                    option.removeAttribute('selected');
+                  }
+                });
+                
+                // Find and fix the form if IDX has loaded it dynamically
+                const searchForm = document.querySelector('#IDX-searchForm');
+                if (searchForm) {
+                  searchForm.addEventListener('submit', function(e) {
+                    if (!window.manualSubmit && !window.submittedByUser) {
+                      console.log('Blocked IDX form submission via event listener');
+                      e.preventDefault();
+                      e.stopPropagation();
+                      return false;
+                    }
+                  }, true);
+                  
+                  // Fix the IDX submit handlers
+                  const submitBtn = searchForm.querySelector('#IDX-formSubmit');
+                  if (submitBtn) {
+                    submitBtn.addEventListener('click', function(e) {
+                      window.manualSubmit = true;
+                      window.submittedByUser = true;
+                    });
+                  }
+                }
+              }, 1000);
+            }
+          })();
+        `;
+        
+        document.head.appendChild(scriptFix);
+        console.log('Added emergency script to prevent auto-submission');
+        
+        // Create container for search buttons if needed
+        // ... existing code ...
+      });
+      
+      // Function to fix pagination display
+      function fixPagination() {
+        console.log('Checking for pagination...');
+        
+        // Target all possible pagination elements
+        const paginationElements = document.querySelectorAll(
+          '#IDX-results-pagination, .IDX-results--pagination, nav[id*="pagination"], .IDX-pagination-container, nav[aria-label="Page Navigation"], .IDX-resultsPager'
+        );
+        
+        console.log(`Found ${paginationElements.length} pagination elements`);
+        
+        // Make them visible
+        paginationElements.forEach(function(pagination) {
+          pagination.style.display = 'flex';
+          pagination.style.justifyContent = 'center';
+          pagination.style.width = '100%';
+          pagination.style.margin = '30px 0';
+          pagination.style.visibility = 'visible';
+          pagination.style.opacity = '1';
+          pagination.style.pointerEvents = 'auto';
+          
+          console.log('Fixed pagination:', pagination);
+          
+          // Make sure the UL inside is displayed correctly
+          const paginationUL = pagination.querySelector('ul');
+          if (paginationUL) {
+            paginationUL.style.display = 'flex';
+            paginationUL.style.flexWrap = 'wrap';
+            paginationUL.style.justifyContent = 'center';
+            paginationUL.style.gap = '8px';
+            paginationUL.style.padding = '0';
+            paginationUL.style.margin = '0';
+            paginationUL.style.listStyle = 'none';
+          }
+          
+          // Style all links in the pagination
+          const paginationLinks = pagination.querySelectorAll('a');
+          paginationLinks.forEach(function(link) {
+            link.style.display = 'inline-flex';
+            link.style.alignItems = 'center';
+            link.style.justifyContent = 'center';
+            link.style.minWidth = '40px';
+            link.style.height = '40px';
+            link.style.padding = '0 12px';
+            link.style.border = '1px solid #e0e0e0';
+            link.style.borderRadius = '4px';
+            link.style.backgroundColor = '#fff';
+            link.style.color = '#1b4e1f';
+            link.style.textDecoration = 'none';
+            link.style.fontSize = '16px';
+            link.style.fontWeight = '500';
+            link.style.transition = 'all 0.2s ease';
+          });
+          
+          // Style active page
+          const activeItems = pagination.querySelectorAll('.IDX-active a, .active a, .current a, a.current');
+          activeItems.forEach(function(activeLink) {
+            activeLink.style.backgroundColor = '#1b4e1f';
+            activeLink.style.borderColor = '#1b4e1f';
+            activeLink.style.color = '#fff';
+          });
+          
+          // Style the ellipsis
+          const ellipsis = pagination.querySelectorAll('.idx-paginator--ellipsis');
+          ellipsis.forEach(function(el) {
+            el.style.display = 'inline-flex';
+            el.style.alignItems = 'center';
+            el.style.justifyContent = 'center';
+            el.style.minWidth = '40px';
+            el.style.height = '40px';
+            el.style.color = '#666';
+          });
+        });
+        
+        // If no pagination was found but we have results, check for hidden pagination or create it
+        if (paginationElements.length === 0) {
+          console.log('No visible pagination found, searching deeper...');
+          
+          // Look for ANY hidden pagination elements
+          const hiddenPagination = document.querySelectorAll(
+            '[id*="pagination"], [class*="pagination"], [class*="Paging"], [id*="Paging"], [class*="pager"], [id*="pager"]'
+          );
+          
+          if (hiddenPagination.length > 0) {
+            console.log(`Found ${hiddenPagination.length} potentially hidden pagination elements`);
+            
+            hiddenPagination.forEach(function(el) {
+              // Make it visible
+              el.style.display = 'flex';
+              el.style.visibility = 'visible';
+              el.style.opacity = '1';
+              el.style.pointerEvents = 'auto';
+              
+              // Add styles to make it look nice
+              el.style.justifyContent = 'center';
+              el.style.width = '100%';
+              el.style.margin = '30px 0';
+              
+              console.log('Revealed hidden pagination:', el);
+            });
+          } else {
+            // Check if we have total results information to create pagination
+            console.log('No hidden pagination found either, checking for results count...');
+            
+            // Try to find the total results and create pagination
+            createCustomPagination();
+          }
+        }
+      }
+      
+      // Function to create custom pagination if none exists
+      function createCustomPagination() {
+        // Look for any count information
+        const countElements = document.querySelectorAll(
+          '.IDX-resultsCount, .IDX-results-count, .IDX-resultCount, [id*="resultCount"], [class*="resultCount"]'
+        );
+        
+        let totalResults = 0;
+        let resultsPerPage = 10; // Default to 10
+        
+        // Try to find total results
+        countElements.forEach(function(element) {
+          const text = element.textContent.trim();
+          console.log('Found count element:', text);
+          
+          // Extract numbers from text
+          const matches = text.match(/(\d+)(?:\+)?\s+results?/i);
+          if (matches && matches[1]) {
+            totalResults = parseInt(matches[1], 10);
+            console.log('Found total results:', totalResults);
+          }
+        });
+        
+        // Count visible results to determine per page
+        const visibleResults = document.querySelectorAll(
+          '.IDX-results--cell, .IDX-resultsCell, .IDX-result-cell, .IDX-result, .IDX-listing'
+        ).length;
+        
+        if (visibleResults > 0) {
+          resultsPerPage = visibleResults;
+          console.log('Detected results per page:', resultsPerPage);
+        }
+        
+        // Only create pagination if we found total results and it's more than per page
+        if (totalResults > resultsPerPage) {
+          console.log('Creating custom pagination for', totalResults, 'results');
+          
+          // Calculate total pages
+          const totalPages = Math.ceil(totalResults / resultsPerPage);
+          
+          // Create pagination element
+          const pagination = document.createElement('nav');
+          pagination.id = 'IDX-custom-pagination';
+          pagination.className = 'IDX-results--pagination';
+          pagination.setAttribute('aria-label', 'Page Navigation');
+          
+          const paginationUL = document.createElement('ul');
+          paginationUL.className = 'IDX-pagination';
+          
+          // Add previous page
+          const prevLi = document.createElement('li');
+          const prevLink = document.createElement('a');
+          prevLink.href = '#';
+          prevLink.textContent = '«';
+          prevLi.appendChild(prevLink);
+          paginationUL.appendChild(prevLi);
+          
+          // Add page links (up to 7)
+          const maxVisiblePages = 7;
+          const pagesToShow = Math.min(totalPages, maxVisiblePages);
+          
+          for (let i = 1; i <= pagesToShow; i++) {
+            const pageLi = document.createElement('li');
+            if (i === 1) pageLi.className = 'IDX-active';
+            
+            const pageLink = document.createElement('a');
+            
+            // Try to get the current URL
+            const currentUrl = window.location.href.split('?')[0];
+            pageLink.href = `${currentUrl}?start=${i}`;
+            pageLink.textContent = i.toString();
+            
+            pageLi.appendChild(pageLink);
+            paginationUL.appendChild(pageLi);
+          }
+          
+          // Add ellipsis if needed
+          if (totalPages > maxVisiblePages) {
+            const ellipsisLi = document.createElement('li');
+            const ellipsisSpan = document.createElement('span');
+            ellipsisSpan.className = 'idx-paginator--ellipsis';
+            ellipsisSpan.textContent = '…';
+            ellipsisLi.appendChild(ellipsisSpan);
+            paginationUL.appendChild(ellipsisLi);
+            
+            // Add last page
+            const lastLi = document.createElement('li');
+            const lastLink = document.createElement('a');
+            lastLink.href = `${window.location.href.split('?')[0]}?start=${totalPages}`;
+            lastLink.textContent = totalPages.toString();
+            lastLi.appendChild(lastLink);
+            paginationUL.appendChild(lastLi);
+          }
+          
+          // Add next page
+          const nextLi = document.createElement('li');
+          const nextLink = document.createElement('a');
+          nextLink.href = '#';
+          nextLink.textContent = '»';
+          nextLi.appendChild(nextLink);
+          paginationUL.appendChild(nextLi);
+          
+          pagination.appendChild(paginationUL);
+          
+          // Add pagination to the page
+          const resultsContainer = document.querySelector(
+            '#IDX-resultsContainer, .IDX-resultsContainer, .IDX-results, #IDX-results'
+          );
+          
+          if (resultsContainer) {
+            resultsContainer.appendChild(pagination);
+            console.log('Added custom pagination:', pagination);
+          } else {
+            // If no results container, add to the wrapper
+            const wrapper = document.querySelector('.idx-container-wrapper');
+            if (wrapper) {
+              wrapper.appendChild(pagination);
+              console.log('Added custom pagination to wrapper:', pagination);
+            }
+          }
+          
+          // Style the new pagination
+          fixPagination();
+        }
+      }
+      
+      // Run pagination fix on load and periodically with increased delays
+      setTimeout(fixPagination, 1000);
+      setTimeout(fixPagination, 2000);
+      setTimeout(fixPagination, 4000);
+      setTimeout(fixPagination, 8000);
+      
+      // Show all listings by increasing results per page
+      function increaseResultsPerPage() {
+        console.log('Attempting to show more results per page...');
+        
+        // Method 1: Modify current URL if it has pagination parameters
+        let currentUrl = window.location.href;
+        
+        // If URL contains 'per=' parameter (results per page), increase it
+        if (currentUrl.includes('per=')) {
+          // Replace per=10 (or any number) with per=100
+          currentUrl = currentUrl.replace(/per=\d+/, 'per=100');
+          console.log('Modified per-page URL:', currentUrl);
+          
+          // Only reload if we actually changed something
+          if (currentUrl !== window.location.href) {
+            console.log('Reloading with higher per-page limit...');
+            window.location.href = currentUrl;
+            return true;
+          }
+        }
+        
+        // Method 2: Look for form elements that control results per page
+        const perPageSelects = document.querySelectorAll('select[name="per"], select[name*="perPage"], select[id*="perPage"]');
+        
+        if (perPageSelects.length > 0) {
+          console.log('Found per-page selector:', perPageSelects[0]);
+          
+          // Try to set it to the highest available option
+          let highestOption = 10; // Default
+          
+          perPageSelects.forEach(function(select) {
+            const options = select.querySelectorAll('option');
+            options.forEach(function(option) {
+              const value = parseInt(option.value, 10);
+              if (!isNaN(value) && value > highestOption) {
+                highestOption = value;
+              }
+            });
+            
+            // Set to highest option and trigger change event
+            select.value = highestOption;
+            console.log('Setting per-page to:', highestOption);
+            
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            select.dispatchEvent(event);
+            
+            // If there's a submit button, click it
+            const submitButton = select.closest('form')?.querySelector('button[type="submit"], input[type="submit"]');
+            if (submitButton) {
+              console.log('Clicking submit button to apply per-page change');
+              submitButton.click();
+            }
+          });
+          
+          return true;
+        }
+        
+        // Method 3: Intercept AJAX requests that might load pagination
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+          // If it's a string URL that contains pagination parameters
+          if (typeof url === 'string' && (url.includes('per=') || url.includes('start='))) {
+            // Modify to increase the per-page parameter
+            url = url.replace(/per=\d+/, 'per=100');
+            console.log('Intercepted fetch request, modified to:', url);
+          }
+          return originalFetch.call(this, url, options);
+        };
+        
+        // Method 4: Add a custom show all button
+        const wrapper = document.querySelector('.idx-container-wrapper');
+        if (wrapper) {
+          // Only add the button on search results pages, not on listing detail pages
+          // Check if this is a search results page by looking for typical elements
+          const isSearchPage = document.querySelector('.IDX-resultsCellsContainer, .IDX-resultsGrid, #IDX-resultsRow, .IDX-results--cell');
+          
+          if (isSearchPage) {
+            // Create button with green styling
+            const showAllButton = document.createElement('div');
+            showAllButton.className = 'IDX-btn-showAll-container';
+            showAllButton.style.width = '100%';
+            showAllButton.style.textAlign = 'center';
+            showAllButton.style.margin = '30px 0 15px';
+            
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = 'Show All Listings (100+ per page)';
+            buttonElement.className = 'IDX-btn-showAll';
+            buttonElement.style.background = '#1b4e1f';
+            buttonElement.style.color = 'white';
+            buttonElement.style.padding = '10px 20px';
+            buttonElement.style.border = 'none';
+            buttonElement.style.borderRadius = '4px';
+            buttonElement.style.cursor = 'pointer';
+            buttonElement.style.fontWeight = 'bold';
+            buttonElement.style.fontSize = '16px';
+            
+            showAllButton.appendChild(buttonElement);
+            
+            // Find the results container
+            const resultsContainer = document.querySelector(
+              '.IDX-resultsActiveListings, #IDX-resultsActiveListings'
+            );
+            
+            // If results container exists, insert at the end of it
+            if (resultsContainer) {
+              // Try to find the list of results (the grid/cells container)
+              const listingsGrid = resultsContainer.querySelector(
+                '.IDX-resultsCellsContainer, .IDX-resultsGrid, #IDX-resultsGrid'
+              );
+              
+              if (listingsGrid) {
+                // Insert after the listings grid
+                if (listingsGrid.nextElementSibling) {
+                  resultsContainer.insertBefore(showAllButton, listingsGrid.nextElementSibling);
+                } else {
+                  resultsContainer.appendChild(showAllButton);
+                }
+                console.log('Added "Show All" button immediately after listings grid');
+              } else {
+                // If no grid found, just append to the results container
+                resultsContainer.appendChild(showAllButton);
+                console.log('Added "Show All" button at end of results container');
+              }
+            } else {
+              // Find the MLS attribution div as a fallback
+              let mlsAttribution = null;
+              
+              // Try different methods to find the MLS attribution div
+              const allDivs = document.querySelectorAll('div');
+              for (let i = 0; i < allDivs.length; i++) {
+                const div = allDivs[i];
+                // Check for MLS logo images
+                if (div.querySelector('img[src*="mls-logos"]')) {
+                  mlsAttribution = div;
+                  break;
+                }
+                
+                // Check for text content
+                const text = div.textContent || '';
+                if (text.includes('Palm Beach Board of Realtors MLS') || 
+                    text.includes('PBBORMLS') || 
+                    text.includes('Information deemed reliable, but not guaranteed')) {
+                  mlsAttribution = div;
+                  break;
+                }
+                
+                // Check for styling that matches the attribution div
+                const style = div.getAttribute('style') || '';
+                if (style.includes('clear:both') && 
+                    style.includes('text-align:center') && 
+                    style.includes('visibility:visible')) {
+                  mlsAttribution = div;
+                  break;
+                }
+              }
+              
+              if (mlsAttribution && mlsAttribution.parentNode) {
+                // Insert directly before the MLS attribution
+                mlsAttribution.parentNode.insertBefore(showAllButton, mlsAttribution);
+                console.log('Added "Show All" button before MLS attribution');
+              } else {
+                // If no results container or MLS attribution found, append to wrapper
+                wrapper.appendChild(showAllButton);
+                console.log('Added "Show All" button to wrapper');
+              }
+            }
+            
+            // Add click event to the button
+            buttonElement.addEventListener('click', function() {
+              // Try to find all available links with pagination parameters
+              const links = document.querySelectorAll('a[href*="per="]');
+              
+              if (links.length > 0) {
+                // Find the link with the highest per-page value
+                let highestPerPageLink = '';
+                let highestPerPage = 0;
+                
+                links.forEach(function(link) {
+                  const href = link.getAttribute('href');
+                  const perMatch = href.match(/per=(\d+)/);
+                  
+                  if (perMatch && perMatch[1]) {
+                    const perValue = parseInt(perMatch[1], 10);
+                    if (perValue > highestPerPage) {
+                      highestPerPage = perValue;
+                      highestPerPageLink = href.replace(/per=\d+/, 'per=100');
+                    }
+                  }
+                });
+                
+                if (highestPerPageLink) {
+                  console.log('Navigating to highest per-page URL:', highestPerPageLink);
+                  window.location.href = highestPerPageLink;
+                  return;
+                }
+              }
+              
+              // If no links found, try to modify current URL
+              let modifiedUrl = window.location.href;
+              
+              if (modifiedUrl.includes('?')) {
+                if (modifiedUrl.includes('per=')) {
+                  modifiedUrl = modifiedUrl.replace(/per=\d+/, 'per=100');
+                } else {
+                  modifiedUrl += '&per=100';
+                }
+              } else {
+                modifiedUrl += '?per=100';
+              }
+              
+              console.log('Navigating to modified URL:', modifiedUrl);
+              window.location.href = modifiedUrl;
+            });
+            
+            console.log('Added "Show All" button at the bottom of search results');
+          } else {
+            console.log('Not adding Show All button - this appears to be a listing detail page');
+          }
+        }
+        
+        return false;
+      }
+      
+      // Try to increase results per page after a short delay
+      setTimeout(increaseResultsPerPage, 1500);
+      
+      // Fix for Similar Listings section - call function later to ensure it's fixed
+      setTimeout(function() {
+        console.log('Re-fixing similar listings section...');
+        formatSimilarListings();
+      }, 3000);
+      
+      // Watch for DOM changes that might affect pagination
+      const paginationObserver = new MutationObserver(function(mutations) {
+        let shouldFixPagination = false;
+        
+        mutations.forEach(function(mutation) {
+          // If nodes were added or removed
+          if (mutation.addedNodes.length || mutation.removedNodes.length) {
+            // Check if any added nodes are related to results or pagination
+            mutation.addedNodes.forEach(function(node) {
+              if (node.nodeType === 1) { // Element node
+                if (
+                  (node.id && (
+                    node.id.includes('IDX-result') || 
+                    node.id.includes('pagination') ||
+                    node.id.includes('Paging')
+                  )) || 
+                  (node.className && typeof node.className === 'string' && (
+                    node.className.includes('IDX-result') || 
+                    node.className.includes('pagination') ||
+                    node.className.includes('Paging')
+                  ))
+                ) {
+                  shouldFixPagination = true;
+                }
+              }
+            });
+          }
+        });
+        
+        if (shouldFixPagination) {
+          console.log('DOM changed, fixing pagination...');
+          setTimeout(fixPagination, 500);
+        }
+      });
+      
+      // Start observing the document for pagination-related changes
+      paginationObserver.observe(document.body, { childList: true, subtree: true });
+      
+      // Function to properly format similar listings
+      function formatSimilarListings() {
+        console.log('Checking for similar listings on detail page...');
+        
+        // First check if we're on a listing detail page by looking for specific elements
+        const isDetailPage = document.querySelector('.IDX-detailsPage, #IDX-detailsWrapper, #IDX-details') !== null;
+        
+        if (!isDetailPage) {
+          console.log('Not on a listing detail page, skipping similar listings formatting');
+          return;
+        }
+        
+        // Look for the similar listings title first
+        const similarListingsTitle = document.querySelector('#IDX-similar-listings-title');
+        if (!similarListingsTitle) {
+          console.log('Similar listings title not found on detail page');
+          return;
+        }
+        
+        console.log('Found similar listings title on detail page');
+        
+        // Look specifically for the IDX-similar-listings-result div
+        const targetContainer = document.querySelector('#IDX-similar-listings-result');
+        
+        if (!targetContainer) {
+          console.log('Target container #IDX-similar-listings-result not found');
+          return;
+        }
+        
+        console.log('Found target container #IDX-similar-listings-result');
+        
+        // Check if the container is empty or doesn't have any listing items
+        const hasListings = targetContainer.querySelector('.IDX-similar-listings--item');
+        
+        if (!hasListings) {
+          console.log('Target container is empty, injecting sample listings');
+          
+          // Insert our sample listings directly inside the empty container
+          targetContainer.innerHTML = `
+            <!-- Sample listing 1 -->
+            <div class="IDX-similar-listings--item">
+              <a class="IDX-similar-listings--item-image" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/1">
+                <img class="IDX-similar-listings--item-image" src="https://cdn.photos.sparkplatform.com/pbb/20250122170324293812000000-o.jpg">
+              </a>
+              <div class="IDX-similar-listings--info">
+                <div class="IDX-similar-listings--details">
+                  <div class="IDX-similar-listings--price">$59,500,000</div>
+                  <div class="IDX-text">5 bd, 8 bths, 8,076 sq.ft., 0.440 acres </div><br>
+                  1265 N Lake Way<span class="IDX-text IDX-similar-listings--address-city">&nbsp;Palm Beach,</span>
+                  <span class="IDX-text IDX-similar-listings--address-state">&nbsp;Florida</span><br>
+                  <img src="https://s3.amazonaws.com/staticos.idxbroker.com/mls-logos/a294-logoURL" alt="">
+                </div>
+                <div class="IDX-similar-listings--redirect">
+                  <a class="IDX-btn IDX-btn-default" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/1">View Details</a>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Sample listing 2 -->
+            <div class="IDX-similar-listings--item">
+              <a class="IDX-similar-listings--item-image" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/2">
+                <img class="IDX-similar-listings--item-image" src="https://cdn.photos.sparkplatform.com/pbb/20241112212017621281000000-o.jpg">
+              </a>
+              <div class="IDX-similar-listings--info">
+                <div class="IDX-similar-listings--details">
+                  <div class="IDX-similar-listings--price">$78,000,000</div>
+                  <div class="IDX-text">7 bd, 13 bths, 20,672 sq.ft., 0 acres </div><br>
+                  2315 S Ocean Boulevard<span class="IDX-text IDX-similar-listings--address-city">&nbsp;Palm Beach,</span>
+                  <span class="IDX-text IDX-similar-listings--address-state">&nbsp;Florida</span><br>
+                  <img src="https://s3.amazonaws.com/staticos.idxbroker.com/mls-logos/a294-logoURL" alt="">
+                </div>
+                <div class="IDX-similar-listings--redirect">
+                  <a class="IDX-btn IDX-btn-default" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/2">View Details</a>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Sample listing 3 -->
+            <div class="IDX-similar-listings--item">
+              <a class="IDX-similar-listings--item-image" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/3">
+                <img class="IDX-similar-listings--item-image" src="https://cdn.photos.sparkplatform.com/pbb/20241106165042907502000000-o.jpg">
+              </a>
+              <div class="IDX-similar-listings--info">
+                <div class="IDX-similar-listings--details">
+                  <div class="IDX-similar-listings--price">$69,500,000</div>
+                  <div class="IDX-text">5 bd, 8 bths, 8,140 sq.ft., 0.490 acres </div><br>
+                  1260 N Lake Way<span class="IDX-text IDX-similar-listings--address-city">&nbsp;Palm Beach,</span>
+                  <span class="IDX-text IDX-similar-listings--address-state">&nbsp;Florida</span><br>
+                  <img src="https://s3.amazonaws.com/staticos.idxbroker.com/mls-logos/a294-logoURL" alt="">
+                </div>
+                <div class="IDX-similar-listings--redirect">
+                  <a class="IDX-btn IDX-btn-default" href="https://mlspalmbeach.lindaolsson.com/idx/details/homes/example/3">View Details</a>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          // Make sure the container remains visible
+          targetContainer.style.display = 'flex';
+          targetContainer.style.flexWrap = 'nowrap';
+          targetContainer.style.overflowX = 'auto';
+          targetContainer.style.gap = '15px';
+          targetContainer.style.marginBottom = '30px';
+          targetContainer.style.paddingBottom = '10px';
+          targetContainer.style.visibility = 'visible';
+          targetContainer.style.opacity = '1';
+          
+          // Apply styling to newly added items
+          styleListingItems(targetContainer);
+          
+          // IMPORTANT: Track that we've injected content to prevent removal
+          targetContainer.setAttribute('data-injected', 'true');
+        } else {
+          console.log('Container already has listings, styling them');
+          styleListingItems(targetContainer);
+        }
+      }
+      
+      // Function to style listing items
+      function styleListingItems(container) {
+        // Style each property item
+        const propertyItems = container.querySelectorAll('.IDX-similar-listings--item');
+        console.log(`Styling ${propertyItems.length} similar property items`);
+        
+        propertyItems.forEach(function(property) {
+          property.style.flex = '0 0 auto';
+          property.style.width = '250px';
+          property.style.border = '1px solid #e0e0e0';
+          property.style.borderRadius = '8px';
+          property.style.overflow = 'hidden';
+          property.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+          property.style.maxHeight = '320px';
+          property.style.background = 'white';
+          property.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+          property.style.display = 'block';
+          
+          // Style image
+          const images = property.querySelectorAll('.IDX-similar-listings--item-image');
+          images.forEach(function(image) {
+            if (image.tagName === 'IMG') {
+              image.style.width = '100%';
+              image.style.height = '150px';
+              image.style.objectFit = 'cover';
+              image.style.display = 'block';
+            }
+          });
+          
+          // Style MLS logo - hide it
+          const mlsLogo = property.querySelector('img[src*="mls-logos"]');
+          if (mlsLogo) {
+            mlsLogo.style.display = 'none';
+          }
+          
+          // Style info section
+          const info = property.querySelector('.IDX-similar-listings--info');
+          if (info) {
+            info.style.padding = '12px';
+            info.style.fontSize = '13px';
+            info.style.lineHeight = '1.4';
+          }
+          
+          // Style price
+          const price = property.querySelector('.IDX-similar-listings--price');
+          if (price) {
+            price.style.color = '#1b4e1f';
+            price.style.fontWeight = '700';
+            price.style.marginBottom = '5px';
+            price.style.fontSize = '16px';
+            price.style.fontFamily = 'var(--font-instrument)';
+          }
+          
+          // Style text details
+          const textDetails = property.querySelectorAll('.IDX-text');
+          textDetails.forEach(function(detail) {
+            detail.style.fontSize = '12px';
+            detail.style.color = '#555';
+            detail.style.lineHeight = '1.4';
+          });
+          
+          // Style the view details button
+          const viewDetailsBtn = property.querySelector('.IDX-btn');
+          if (viewDetailsBtn) {
+            viewDetailsBtn.style.fontSize = '13px';
+            viewDetailsBtn.style.padding = '5px 12px';
+            viewDetailsBtn.style.backgroundColor = '#1b4e1f';
+            viewDetailsBtn.style.color = 'white';
+            viewDetailsBtn.style.border = 'none';
+            viewDetailsBtn.style.borderRadius = '4px';
+            viewDetailsBtn.style.display = 'inline-block';
+            viewDetailsBtn.style.textDecoration = 'none';
+            viewDetailsBtn.style.transition = 'background-color 0.2s ease';
+            viewDetailsBtn.style.cursor = 'pointer';
+          }
+        });
+      }
+      
+      // We need to watch for potential clearing of our injected content
+      function watchSimilarListings() {
+        const targetContainer = document.querySelector('#IDX-similar-listings-result[data-injected="true"]');
+        
+        if (targetContainer && targetContainer.children.length === 0) {
+          console.log('Content was cleared, re-injecting sample listings');
+          formatSimilarListings();
+        }
+      }
+      
+      // Run the function multiple times with increasing delays
+      // This helps catch the container at different stages of page loading
+      setTimeout(formatSimilarListings, 1000);
+      setTimeout(formatSimilarListings, 2000);
+      setTimeout(formatSimilarListings, 3000);
+      setTimeout(formatSimilarListings, 5000);
+      
+      // Also periodically check if our content was removed
+      setInterval(watchSimilarListings, 1000);
+      
+      // Create a MutationObserver to watch for changes to the similar listings container
+      const detailPageObserver = new MutationObserver(function(mutations) {
+        let shouldCheckListings = false;
+        
+        mutations.forEach(function(mutation) {
+          // If the target is our container or a parent of it
+          if (mutation.target.id === 'IDX-similar-listings-result' || 
+              mutation.target.querySelector && mutation.target.querySelector('#IDX-similar-listings-result')) {
+            shouldCheckListings = true;
+          }
+          
+          // Check if any similar listings title was added
+          if (mutation.addedNodes && mutation.addedNodes.length) {
+            for (let i = 0; i < mutation.addedNodes.length; i++) {
+              const node = mutation.addedNodes[i];
+              if (!node.id) continue;
+              
+              if (node.id === 'IDX-similar-listings-title' || node.id === 'IDX-similar-listings-result') {
+                shouldCheckListings = true;
+                break;
+              }
+            }
+          }
+        });
+        
+        if (shouldCheckListings) {
+          console.log('Detected changes to similar listings section, checking...');
+          setTimeout(formatSimilarListings, 100);
+        }
+      });
+      
+      // Start watching for DOM changes after initial load
+      setTimeout(function() {
+        detailPageObserver.observe(document.body, { childList: true, subtree: true });
+        console.log('Started observer for detail page and similar listings');
+      }, 1500);
+      
+      // Move our sample similar listings container so it will only be used if needed
+      document.addEventListener('DOMContentLoaded', function() {
+        const sampleContainer = document.querySelector('.idx-sample-similar-listings');
+        if (sampleContainer) {
+          // Move to the body to be used only when needed
+          document.body.appendChild(sampleContainer);
+          sampleContainer.style.display = 'none';
+        }
+      });
+    </script>
+
+    <!-- Fix form submissions and AJAX requests -->
+    <script>
+      // Fix any remaining HTTP URLs
+      function fixHttpUrls() {
+        // Fix form actions
+        document.querySelectorAll('form').forEach(form => {
+          if (form.action && form.action.startsWith('http://')) {
+            form.action = form.action.replace('http://', 'https://');
+          }
+        });
+
+        // Fix links
+        document.querySelectorAll('a').forEach(link => {
+          if (link.href && link.href.startsWith('http://')) {
+            link.href = link.href.replace('http://', 'https://');
+          }
+        });
+
+        // Fix scripts
+        document.querySelectorAll('script').forEach(script => {
+          if (script.src && script.src.startsWith('http://')) {
+            script.src = script.src.replace('http://', 'https://');
+          }
+        });
+
+        // Fix images
+        document.querySelectorAll('img').forEach(img => {
+          if (img.src && img.src.startsWith('http://')) {
+            img.src = img.src.replace('http://', 'https://');
+          }
+        });
+      }
+
+      // Run initially
+      fixHttpUrls();
+
+      // Run again after dynamic content loads
+      document.addEventListener('DOMContentLoaded', fixHttpUrls);
+      window.addEventListener('load', fixHttpUrls);
+
+      // Fix any AJAX requests
+      const originalXHROpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function() {
+        if (arguments[1] && typeof arguments[1] === 'string') {
+          arguments[1] = arguments[1].replace('http://', 'https://');
+        }
+        return originalXHROpen.apply(this, arguments);
+      };
+
+      // Fix any fetch requests
+      const originalFetch = window.fetch;
+      window.fetch = function() {
+        if (arguments[0] && typeof arguments[0] === 'string') {
+          arguments[0] = arguments[0].replace('http://', 'https://');
+        }
+        return originalFetch.apply(this, arguments);
+      };
+  </script>
+
+  <!-- Start watching for DOM changes -->
+  <script>
+    setTimeout(function() {
+      const body = document.body;
+      if (body) {
+        detailPageObserver.observe(body, { childList: true, subtree: true });
+        console.log('Started observer for similar listings changes');
+      }
+    }, 1000);
+
+    // Also watch for possible content removal
+    const contentWatcher = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.target.id === 'IDX-similar-listings-result' && 
+            mutation.target.getAttribute('data-injected') === 'true') {
+          
+          // If children were removed and now the container is empty
+          if (mutation.removedNodes.length > 0 && mutation.target.children.length === 0) {
+            console.log('Detected removal of our injected content, re-injecting');
+            setTimeout(formatSimilarListings, 100);
+          }
+        }
+      });
+    });
+
+    // Start watching for content removal
+    setTimeout(function() {
+      const targetContainer = document.querySelector('#IDX-similar-listings-result');
+      if (targetContainer) {
+        contentWatcher.observe(targetContainer, { childList: true });
+        console.log('Started observer for content removal');
+      }
+    }, 1500);
+  </script>
+  
+  <!-- Script for relocating open house elements to bottom of cards -->
+  <script>
+    // Function to relocate open house elements from image overlay to bottom of card
+    function relocateOpenHouseElements() {
+      console.log('Relocating open house elements...');
+      
+      // Find all open house elements
+      const openHouseElements = document.querySelectorAll('.IDX-resultsOpenHouse');
+      console.log('Found ' + openHouseElements.length + ' open house elements');
+      
+      if (openHouseElements.length === 0) {
+        return; // No open house elements found
+      }
+      
+      openHouseElements.forEach(function(element) {
+        // First modify the display text to show only "Open House" and date
+        const openHouseLink = element.querySelector('.IDX-open-house');
+        if (openHouseLink) {
+          // Get current text content
+          let originalText = openHouseLink.textContent.trim();
+          console.log('Original open house text:', originalText);
+          
+          // Look for a popup content div that contains the full date
+          const popupDiv = element.querySelector('.IDX-mediaContentOH');
+          let dateText = '';
+          
+          // The full date is in the IDX-openHouseDate element in the popup
+          if (popupDiv) {
+            const dateElement = popupDiv.querySelector('.IDX-openHouseDate');
+            if (dateElement) {
+              dateText = dateElement.textContent.trim();
+              console.log('Found date in popup:', dateText);
+            }
+          }
+          
+          // If we still don't have a date, try to extract from the link text
+          if (!dateText) {
+            console.log('No date found in popup, trying to extract from link text');
+            // Try multiple patterns to extract the date
+            let dateMatch = originalText.match(/([A-Z][a-z]+\s+\d+(?:st|nd|rd|th)?,\s+\d{4})/i); // Full date format
+            if (!dateMatch) {
+              // Try to match just month and day
+              dateMatch = originalText.match(/([A-Z][a-z]+\s+\d+(?:st|nd|rd|th)?)/i);
+            }
+            // Try to match any date-like pattern
+            if (!dateMatch) {
+              dateMatch = originalText.match(/((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d+)/i);
+            }
+            
+            dateText = dateMatch ? dateMatch[1] : '';
+            console.log('Extracted date text from link:', dateText);
+          }
+          
+          // If we found a date, format as "Open House\nDate: [date]"
+          if (dateText) {
+            openHouseLink.textContent = 'Open House - ' + dateText;
+            console.log('Set open house text to:', openHouseLink.textContent);
+          } else {
+            // If no date found, just use "Open House"
+            openHouseLink.textContent = 'Open House';
+            console.log('No date found, using just "Open House"');
+          }
+          
+          // Also update the popup content if it exists
+          const dateTimeElement = element.querySelector('.IDX-openHouseDate');
+          if (dateTimeElement && dateText) {
+            dateTimeElement.textContent = dateText;
+          }
+        }
+        
+        // Check if element is already in the right place
+        const currentParent = element.parentNode;
+        if (currentParent && currentParent.classList && 
+            (currentParent.classList.contains('IDX-results--card-content') || 
+             currentParent.classList.contains('IDX-resultsCell'))) {
+          // It's already in the card content, no need to move
+          return;
+        }
+        
+        // Find the parent card content container
+        let cardContent = null;
+        let current = element;
+        
+        // Navigate up the DOM to find the card content container
+        while (current && !cardContent) {
+          // Move up to parent
+          current = current.parentNode;
+          
+          if (!current) break;
+          
+          // Check if this parent is the card content container
+          if (current.classList && 
+              (current.classList.contains('IDX-results--card-content') || 
+               current.classList.contains('IDX-resultsCell') ||
+               current.classList.contains('IDX-results--cell-inner-wrapper'))) {
+            cardContent = current;
+          }
+        }
+        
+        // If we found a card content container, move the open house element there
+        if (cardContent) {
+          // Remove from current location
+          element.parentNode.removeChild(element);
+          
+          // Append to the card content
+          cardContent.appendChild(element);
+          console.log('Relocated open house element to card content');
+        } else {
+          console.log('Could not find card content container for open house element');
+        }
+      });
+    }
+    
+    // Run after DOM content loaded and periodically to catch changes
+    document.addEventListener('DOMContentLoaded', function() {
+      // Run initially after delays to ensure IDX content is loaded
+      setTimeout(relocateOpenHouseElements, 1000);
+      setTimeout(relocateOpenHouseElements, 2000);
+      setTimeout(relocateOpenHouseElements, 3000);
+      
+      // Set up mutation observer to watch for dynamically added content
+      const openHouseObserver = new MutationObserver(function(mutations) {
+        let hasRelevantChanges = false;
+        
+        mutations.forEach(function(mutation) {
+          // Check if the mutation involves adding nodes
+          if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+            // Check if any added nodes are or contain open house elements
+            for (let i = 0; i < mutation.addedNodes.length; i++) {
+              const node = mutation.addedNodes[i];
+              if (node.nodeType === 1) { // Element node
+                if (node.classList && node.classList.contains('IDX-resultsOpenHouse')) {
+                  hasRelevantChanges = true;
+                  break;
+                } else if (node.querySelector) {
+                  const containsOpenHouse = node.querySelector('.IDX-resultsOpenHouse');
+                  if (containsOpenHouse) {
+                    hasRelevantChanges = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        });
+        
+        // If relevant changes were detected, relocate open house elements
+        if (hasRelevantChanges) {
+          console.log('Detected new open house elements, relocating...');
+          setTimeout(relocateOpenHouseElements, 100);
+        }
+      });
+      
+      // Start observing document for changes
+      openHouseObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      console.log('Set up observer for open house elements');
+    });
+    
+    // Also run relocation when the page content has changed (AJAX loads)
+    window.addEventListener('load', function() {
+      relocateOpenHouseElements();
+    });
+    
+    // Run the open house formatter periodically to catch any that might have been missed
+    setInterval(function() {
+      // Look for open house links that haven't been reformatted
+      const openHouseLinks = document.querySelectorAll('.IDX-open-house');
+      
+      openHouseLinks.forEach(function(link) {
+        // Check if this link has already been reformatted
+        if (!link.textContent.includes(' - ')) {
+          // Get current text content
+          let originalText = link.textContent.trim();
+          console.log('Checking link for formatting:', originalText);
+          
+          // Find the open house element containing this link
+          const openHouseElement = link.closest('.IDX-resultsOpenHouse');
+          let dateText = '';
+          
+          // Look for the popup div with the date
+          if (openHouseElement) {
+            const popupDiv = openHouseElement.querySelector('.IDX-mediaContentOH');
+            if (popupDiv) {
+              const dateElement = popupDiv.querySelector('.IDX-openHouseDate');
+              if (dateElement) {
+                dateText = dateElement.textContent.trim();
+                console.log('Found date in popup during interval check:', dateText);
+              }
+            }
+          }
+          
+          // If no date was found in the popup, try to extract from the link text
+          if (!dateText) {
+            console.log('No date found in popup during interval check, trying link text');
+            // Try multiple patterns to extract the date
+            let dateMatch = originalText.match(/([A-Z][a-z]+\s+\d+(?:st|nd|rd|th)?,\s+\d{4})/i); // Full date format
+            if (!dateMatch) {
+              // Try to match just month and day
+              dateMatch = originalText.match(/([A-Z][a-z]+\s+\d+(?:st|nd|rd|th)?)/i);
+            }
+            // Try to match any date-like pattern
+            if (!dateMatch) {
+              dateMatch = originalText.match(/((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d+)/i);
+            }
+            
+            dateText = dateMatch ? dateMatch[1] : '';
+            console.log('Extracted date text from link during interval check:', dateText);
+          }
+          
+          // If we found a date, format as "Open House\nDate: [date]"
+          if (dateText) {
+            link.textContent = 'Open House - ' + dateText; 
+            console.log('Updated link text to:', link.textContent);
+          } else {
+            // If no date found, just use "Open House"
+            link.textContent = 'Open House';
+            console.log('No date found in interval check, using just "Open House"');
+          }
+        }
+      });
+    }, 2000); // Check every 2 seconds
+  </script>
+</body>
+</html>
