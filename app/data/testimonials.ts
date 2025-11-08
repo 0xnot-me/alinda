@@ -6,6 +6,11 @@ export interface Testimonial {
 }
 
 export const testimonials: Testimonial[] = [
+    {
+    quote: "It was a pleasure working with Linda on the sale of my Palm Beach residence. She demonstrated exceptional professionalism, a deep knowledge of the Palm Beach market, and an impeccable eye for detail. Linda's integrity, tireless dedication, and work ethic truly sets her apart. She understands the nuances of the Palm Beach market and represented my property with the utmost precision, discretion, and care.",
+    author: "Terry M.",
+    type: "Home Seller"
+  },
   {
     quote: "As an attorney looking to relocate to Palm Beach my lucky day was when I found Linda Olsson. She is the consummate intelligent pro who brought insights and strategy to every element of her plan to help us get the best value on the home we selected, the home of our dreams. Right off, her knowledge of the market fundamentals and its microtrends proved indispensable in weeding out properties during our selection process. And when I saw Linda step into the negotiating ring it became obvious that we were going to prevail on price. If I could give just one piece of advice it would be to call Linda now just to meet her and discover certain opportunities that you most likely wouldn’t know about.",
     author: "Mark S.",
