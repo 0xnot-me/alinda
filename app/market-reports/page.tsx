@@ -41,6 +41,12 @@ export default function MarketReportsPage() {
 
   // Group reports by year with PDF file paths
   const reportsByYear: Record<string, Report[]> = {
+    "2026": [
+      { name: "1st Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "1st")}`, available: true },
+      { name: "2nd Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "2nd")}`, available: false },
+      { name: "3rd Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "3rd")}`, available: false },
+      { name: "4th Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "4th")}`, available: false }
+    ],
     "2025": [
       { name: "1st Quarter Report 2025", pdfPath: `/market_reports/${getPdfFilename("2025", "1st")}`, available: true },
       { name: "2nd Quarter Report 2025", pdfPath: `/market_reports/${getPdfFilename("2025", "2nd")}`, available: true },
