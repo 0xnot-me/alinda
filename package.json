@@ -24,7 +24,7 @@
     "embla-carousel-react": "^8.5.2",
     "lucide-react": "^0.476.0",
     "motion": "^12.4.7",
-    "next": "15.1.7",
+    "next": "15.1.11",
     "notion-client": "^7.3.0",
     "notion-types": "^7.3.0",
     "react": "^19.0.0",
