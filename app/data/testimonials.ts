@@ -6,7 +6,12 @@ export interface Testimonial {
 }
 
 export const testimonials: Testimonial[] = [
-    {
+  {
+    quote: "Linda was an absolute pleasure to work with from start to finish. She was proactive, responsive, and incredibly hardworking, always paying attention to the details and looking for ways to move the transaction forward in her client's best interest. Her communication was exceptional—she kept us informed at every important step with thoughtful, meaningful updates, striking the perfect balance of being available without being overwhelming. Her deep market knowledge, professionalism, and extensive network of resources inspired confidence throughout the process. It was also clear how highly respected she is by other realtors and within the community, which proved invaluable whenever questions or challenges arose. I would recommend Linda without hesitation.",
+    author: "Anonymous",
+    type: "Client"
+  },
+  {
     quote: "It was a pleasure working with Linda on the sale of my Palm Beach residence. She demonstrated exceptional professionalism, a deep knowledge of the Palm Beach market, and an impeccable eye for detail. Linda's integrity, tireless dedication, and work ethic truly sets her apart. She understands the nuances of the Palm Beach market and represented my property with the utmost precision, discretion, and care.",
     author: "Terry M.",
     type: "Home Seller"
