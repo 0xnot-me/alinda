@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/Navbar"
 import Link from "next/link"
+import Image from "next/image"
 import { TextAnimate } from "@/components/magicui/text-animate"
 import { useEffect, useState } from "react"
 import { Logo } from "@/app/components/Logo"
@@ -48,10 +49,15 @@ export default function AboutPage() {
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
               <div className="relative flex md:justify-end justify-center">
-                <img
-                  src="/linda.png"
+                <Image
+                  src="/linda.jpg"
                   alt="Linda R. Olsson"
-                  className="w-[75%] md:pr-20 pr-0 rounded-lg"
+                  width={1000}
+                  height={1400}
+                  className="w-[75%] md:pr-20 pr-0 h-auto rounded-lg"
+                  sizes="(max-width: 768px) 75vw, 40vw"
+                  priority
+                  unoptimized
                 />
               </div>
               <div>

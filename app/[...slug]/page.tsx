@@ -8,6 +8,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "../components/Footer";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import { ContactCard } from "../components/ContactCard"
+import { sanitizeHtml } from "@/lib/sanitize-html"
 
 const instrumentSerif = Instrument_Serif({
   weight: ["400"],
@@ -46,7 +47,7 @@ export default function BlogPostPage() {
         }
         const data = await response.json();
         setPost(data.post);
-        setProcessedContent(data.post.content);
+        setProcessedContent(sanitizeHtml(data.post.content));
       } catch (error) {
         console.error("Error fetching blog post:", error);
         // Trigger the 404 page instead of setting an error state

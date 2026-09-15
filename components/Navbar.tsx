@@ -45,7 +45,12 @@ export function Navbar({ isScrolled, alwaysSolid = false }: { isScrolled: boolea
       <div className="container mx-auto flex items-center justify-between">
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button onClick={toggleMenu} className="text-white">
+          <button
+            onClick={toggleMenu}
+            className="text-white"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMenuOpen}
+          >
             <Menu className="h-8 w-8" />
           </button>
         </div>
@@ -179,6 +184,7 @@ export function Navbar({ isScrolled, alwaysSolid = false }: { isScrolled: boolea
           <button 
             onClick={toggleMenu}
             className="absolute top-8 right-4 text-white"
+            aria-label="Close navigation menu"
           >
             <X className="h-8 w-8" />
           </button>

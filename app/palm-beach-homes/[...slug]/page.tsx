@@ -8,6 +8,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/app/components/Footer";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import { ContactCard } from "@/app/components/ContactCard"
+import { sanitizeHtml } from "@/lib/sanitize-html"
 
 const instrumentSerif = Instrument_Serif({
   weight: ["400"],
@@ -67,7 +68,7 @@ export default function PalmBeachHomesCatchAllPage() {
           if (data) {
             setPost(data.post);
             if (data.post?.content) {
-              setProcessedContent(data.post.content);
+              setProcessedContent(sanitizeHtml(data.post.content));
             }
           }
         })

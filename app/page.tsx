@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link"
+import Image from "next/image"
+import dynamic from "next/dynamic"
 import { Menu, MapPin, ArrowRight, Star, Calendar, Phone, Mail, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Instrument_Serif } from "next/font/google"
@@ -19,9 +21,27 @@ import { TextAnimate } from "@/components/magicui/text-animate"
 import { testimonials } from "./data/testimonials"
 import { Navbar } from "@/components/Navbar"
 import { Footer } from "./components/Footer"
-import { IdxFeaturedProperties } from "./components/IdxFeaturedProperties"
-import { ContactCard } from "./components/ContactCard"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+
+const IdxFeaturedProperties = dynamic(
+  () =>
+    import("./components/IdxFeaturedProperties").then((mod) => mod.IdxFeaturedProperties),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full min-h-[280px] rounded-lg bg-gray-100" aria-hidden="true" />
+    ),
+  }
+)
+
+const ContactCard = dynamic(
+  () => import("./components/ContactCard").then((mod) => mod.ContactCard),
+  { ssr: true }
+)
+
+const WEB3FORMS_ACCESS_KEY =
+  process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ||
+  "d91d1c9b-e5f6-47df-abe1-0306225ab6bf"
 
 const instrumentSerif = Instrument_Serif({ 
   weight: ['400'],
@@ -35,6 +55,8 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [formStatus, setFormStatus] = useState("");
+  const [loadHeroVideo, setLoadHeroVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   // Use useEffect to set a timer for showing content
   useEffect(() => {
@@ -67,6 +89,50 @@ export default function Home() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Defer the 14MB hero video: skip on mobile / save-data / slow networks; load after idle on desktop
+  useEffect(() => {
+    const connection = (navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }).connection;
+    const prefersReducedData =
+      connection?.saveData ||
+      connection?.effectiveType === "2g" ||
+      connection?.effectiveType === "slow-2g";
+    const isSmallViewport = window.matchMedia("(max-width: 768px)").matches;
+
+    if (isSmallViewport || prefersReducedData) {
+      return;
+    }
+
+    const enableVideo = () => setLoadHeroVideo(true);
+    const idle = (window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    }).requestIdleCallback;
+
+    if (typeof idle === "function") {
+      const id = idle(enableVideo, { timeout: 2500 });
+      return () => {
+        (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(id);
+      };
+    }
+
+    const timer = window.setTimeout(enableVideo, 1800);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!loadHeroVideo || !videoRef.current) return;
+    const video = videoRef.current;
+    video.src = "/video.mp4";
+    video.load();
+    const playPromise = video.play();
+    if (playPromise?.catch) {
+      playPromise.catch(() => {
+        // Autoplay can be blocked; poster remains visible
+      });
+    }
+  }, [loadHeroVideo]);
   
   // Handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -74,7 +140,7 @@ export default function Home() {
     setFormStatus("Sending...");
 
     const formData = new FormData(event.target as HTMLFormElement);
-    formData.append("access_key", "d91d1c9b-e5f6-47df-abe1-0306225ab6bf");
+    formData.append("access_key", WEB3FORMS_ACCESS_KEY);
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -140,20 +206,27 @@ export default function Home() {
         }`}>
           {/* Video background contained within hero section */}
           <div className="absolute inset-0 overflow-hidden">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover transform -translate-x-1/2 -translate-y-1/2"
-            >
-              <source src="/video.mp4" type="video/mp4" />
-              <img 
-                src="/bgtest.png" 
-                alt="Background" 
-                className="absolute top-0 left-0 w-full h-full object-cover" 
+            <Image
+              src="/hero-poster.jpg"
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              aria-hidden="true"
+            />
+            {loadHeroVideo && (
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="none"
+                poster="/hero-poster.jpg"
+                className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover transform -translate-x-1/2 -translate-y-1/2"
               />
-            </video>
+            )}
             <div className="absolute inset-0 bg-black/30" />
           </div>
           
@@ -183,10 +256,14 @@ export default function Home() {
               <div className="relative">
                 {/* Image with absolute positioning */}
                 <div className="relative w-[40%] float-left mr-10 mb-10">
-                  <img
-                    src="/linda.png"
+                  <Image
+                    src="/linda.jpg"
                     alt="Linda R. Olsson"
-                    className="relative z-20 w-full object-contain shadow-xl rounded-lg border-t border-l border-r border-gray-100"
+                    width={1000}
+                    height={1400}
+                    sizes="(max-width: 768px) 90vw, 40vw"
+                    unoptimized
+                    className="relative z-20 w-full h-auto object-contain shadow-xl rounded-lg border-t border-l border-r border-gray-100"
                     style={{
                       backgroundColor: '#f3f4f6',
                       borderRadius: '0.5rem',
@@ -231,57 +308,57 @@ export default function Home() {
                 
                 
                     <div className="ticker-item">
-                      <img src="/pbdnx.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/pbdnx.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/illus.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/illus.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/wsj.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/wsj.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/housingwire.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/housingwire.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/wpbf.png" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/wpbf.png" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/Zillow.png" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/Zillow.png" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/pbdnx.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/pbdnx.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/illus.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/illus.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     
                     {/* Duplicate set */}
                     <div className="ticker-item">
-                      <img src="/housingwire.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/housingwire.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/illus.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/illus.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/wsj.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/wsj.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/pbdnx.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/pbdnx.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/illus.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/illus.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/wpbf.png" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/wpbf.png" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/Zillow.png" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/Zillow.png" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/illus.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/illus.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                     <div className="ticker-item">
-                      <img src="/merc-2.svg" alt="Media Logo" className="h-8 grayscale hover:grayscale-0 transition-all mx-16" />
+                      <img src="/merc-2.svg" alt="Media Logo" width="120" height="32" loading="lazy" decoding="async" className="h-8 w-auto grayscale hover:grayscale-0 transition-all mx-16" />
                     </div>
                   </div>
                 </div>

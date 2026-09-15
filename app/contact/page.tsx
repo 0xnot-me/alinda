@@ -76,7 +76,11 @@ export default function ContactPage() {
     }
     
     // Include important security fields
-    formData.append("access_key", "d91d1c9b-e5f6-47df-abe1-0306225ab6bf");
+    formData.append(
+      "access_key",
+      process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ||
+        "d91d1c9b-e5f6-47df-abe1-0306225ab6bf"
+    );
     // Add a browser fingerprint
     formData.append("from_page", window.location.href);
     formData.append("user_agent", navigator.userAgent);
