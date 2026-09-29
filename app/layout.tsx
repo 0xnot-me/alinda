@@ -1,3 +1,4 @@
+import { BusinessSchema } from "./components/BusinessSchema";
 import type { Metadata } from "next";
 import { Geist_Mono, Instrument_Serif } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
@@ -64,6 +65,7 @@ export default function RootLayout({
         className={`${instrumentSerif.variable} ${geistMono.variable} font-serif antialiased`}
         suppressHydrationWarning
       >
+        <BusinessSchema />
         {children}
         <Analytics />
         {/* Defer ads/analytics until after the page is interactive / idle */}
