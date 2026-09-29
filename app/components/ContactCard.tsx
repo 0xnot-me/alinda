@@ -1,5 +1,6 @@
 import { Instrument_Serif } from "next/font/google"
 import Link from "next/link"
+import Image from "next/image"
 import { Logo } from "./Logo"
 
 const instrumentSerif = Instrument_Serif({ 
@@ -52,10 +53,14 @@ export function ContactCard({ showLogo = true, showImage = true, className = "",
                   </div>
                 )}
                 {showImage && (
-                  <img
-                    src="/linda.png"
+                  <Image
+                    src="/linda.jpg"
                     alt="Linda R. Olsson"
+                    width={208}
+                    height={291}
                     className="w-52 h-auto rounded-lg"
+                    sizes="208px"
+                    unoptimized
                   />
                 )}
               </div>

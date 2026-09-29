@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/Navbar"
 import Link from "next/link"
+import Image from "next/image"
 import { TextAnimate } from "@/components/magicui/text-animate"
 import { useEffect, useState } from "react"
 import { Logo } from "@/app/components/Logo"
@@ -96,10 +97,14 @@ export default function TeamPage() {
               {/* Linda's Card (First Position) */}
               <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
                 <div className="flex flex-col items-center text-center">
-                  <img
-                    src="/linda.png"
+                  <Image
+                    src="/linda.jpg"
                     alt="Linda R. Olsson"
+                    width={192}
+                    height={192}
                     className="w-48 h-48 object-cover rounded-lg mb-4"
+                    sizes="192px"
+                    unoptimized
                   />
                   <h3 className="text-2xl font-semibold mb-2">Linda R. Olsson</h3>
                   <p className="text-gray-700 mb-1">Broker/Owner</p>

@@ -28,7 +28,7 @@ export function Footer() {
             <h4 className="text-xl font-light mb-5 text-pink-200">Quick Links</h4>
             <ul className="space-y-3 text-white text-lg">
               <li>
-                <Link href="/about">About</Link>
+                <Link href="/about-us">About</Link>
               </li>
               <li>
                 <Link href="/properties">Featured Properties</Link>

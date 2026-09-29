@@ -10,6 +10,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "../../components/Footer";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import { ContactCard } from "../../components/ContactCard"
+import { sanitizeHtml } from "@/lib/sanitize-html"
 
 // Import required CSS for react-notion-x
 import 'react-notion-x/src/styles.css';
@@ -73,7 +74,7 @@ export default function BlogPostPage() {
             setPageTitle(localData.post.title || 'Blog Post');
             setCoverImage(localData.post.featuredImage || localData.post.image || null);
             setCreatedTime(new Date(localData.post.date || localData.post.createdTime || Date.now()).getTime());
-            setHtmlContent(localData.post.content || '');
+            setHtmlContent(sanitizeHtml(localData.post.content || ''));
             setAuthor(localData.post.author || 'Linda Olsson');
             setLoading(false);
             return;
