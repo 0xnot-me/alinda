@@ -34,7 +34,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https: http:",
       "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' ws: wss: http://127.0.0.1:* http://localhost:* https://www.googletagmanager.com https://www.google-analytics.com https://www.google.com https://googleads.g.doubleclick.net https://api.web3forms.com https://api.idxbroker.com https://mlspalmbeach.lindaolsson.com https://middleware.idxbroker.com https://cdn.photos.sparkplatform.com https://vitals.vercel-insights.com https://va.vercel-scripts.com",
-      "frame-src 'self' https://mlspalmbeach.lindaolsson.com https://middleware.idxbroker.com https://www.googletagmanager.com https://www.google.com",
+      "frame-src 'self' https://mlspalmbeach.lindaolsson.com https://middleware.idxbroker.com https://www.googletagmanager.com https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com",
       "media-src 'self' blob:",
       "object-src 'none'",
       "base-uri 'self'",
@@ -101,6 +101,9 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
+  },
+  async redirects() {
+    return [{ source: "/about", destination: "/about-us", permanent: true }];
   },
   async rewrites() {
     return [
