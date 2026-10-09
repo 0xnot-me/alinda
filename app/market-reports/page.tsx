@@ -44,7 +44,7 @@ export default function MarketReportsPage() {
     "2026": [
       { name: "1st Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "1st")}`, available: true },
       { name: "2nd Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "2nd")}`, available: true },
-      { name: "3rd Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "3rd")}`, available: false },
+      { name: "3rd Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "3rd")}`, available: true },
       { name: "4th Quarter Report 2026", pdfPath: `/market_reports/${getPdfFilename("2026", "4th")}`, available: false }
     ],
     "2025": [
